@@ -78,72 +78,59 @@ A full-stack Hotel Management System built with the MERN stack (MongoDB, Express
 ---
 
 ## Project Structure
-HMS/
-├── server/                  # Node + Express Backend
-│   ├── config/
-│   │   └── db.js            # MongoDB connection
-│   ├── controllers/         # Business logic
-│   │   ├── authController.js
-│   │   ├── roomController.js
-│   │   ├── guestController.js
-│   │   ├── bookingController.js
-│   │   ├── invoiceController.js
-│   │   └── dashboardController.js
-│   ├── middleware/
-│   │   └── auth.js          # JWT middleware
-│   ├── models/              # Mongoose schemas
-│   │   ├── Admin.js
-│   │   ├── Room.js
-│   │   ├── Guest.js
-│   │   ├── Booking.js
-│   │   └── Invoice.js
-│   ├── routes/              # Express routes
-│   │   ├── authRoutes.js
-│   │   ├── roomRoutes.js
-│   │   ├── guestRoutes.js
-│   │   ├── bookingRoutes.js
-│   │   ├── invoiceRoutes.js
-│   │   └── dashboardRoutes.js
-│   ├── seed/
-│   │   ├── seedAdmin.js     # Creates admin user
-│   │   └── seedData.js      # Seeds rooms and guests
-│   ├── .env                 # Environment variables (not committed)
-│   ├── .gitignore
-│   ├── package.json
-│   └── server.js            # Entry point
-│
-└── client/                  # React Frontend (Vite)
-├── src/
-│   ├── api/
-│   │   └── axios.js     # Axios instance with token interceptor
-│   ├── context/
-│   │   └── AuthContext.jsx
-│   ├── components/
-│   │   ├── Navbar.jsx
-│   │   └── ProtectedRoute.jsx
-│   ├── pages/
-│   │   ├── Auth/
-│   │   │   └── Login.jsx
-│   │   ├── Dashboard/
-│   │   │   └── Dashboard.jsx
-│   │   ├── Rooms/
-│   │   │   ├── Rooms.jsx
-│   │   │   ├── AddRoom.jsx
-│   │   │   └── EditRoom.jsx
-│   │   ├── Guests/
-│   │   │   ├── Guests.jsx
-│   │   │   ├── AddGuest.jsx
-│   │   │   └── EditGuest.jsx
-│   │   ├── Bookings/
-│   │   │   ├── Bookings.jsx
-│   │   │   └── AddBooking.jsx
-│   │   └── Invoices/
-│   │       ├── Invoices.jsx
-│   │       └── InvoiceDetail.jsx
-│   ├── App.jsx
-│   └── main.jsx
-├── .gitignore
-└── package.json
+
+    HMS/
+    ├── server/                  # Node + Express Backend
+    │   ├── config/
+    │   │   └── db.js
+    │   ├── controllers/
+    │   │   ├── authController.js
+    │   │   ├── roomController.js
+    │   │   ├── guestController.js
+    │   │   ├── bookingController.js
+    │   │   ├── invoiceController.js
+    │   │   └── dashboardController.js
+    │   ├── middleware/
+    │   │   └── auth.js
+    │   ├── models/
+    │   │   ├── Admin.js
+    │   │   ├── Room.js
+    │   │   ├── Guest.js
+    │   │   ├── Booking.js
+    │   │   └── Invoice.js
+    │   ├── routes/
+    │   │   ├── authRoutes.js
+    │   │   ├── roomRoutes.js
+    │   │   ├── guestRoutes.js
+    │   │   ├── bookingRoutes.js
+    │   │   ├── invoiceRoutes.js
+    │   │   └── dashboardRoutes.js
+    │   ├── seed/
+    │   │   ├── seedAdmin.js
+    │   │   └── seedData.js
+    │   ├── .env
+    │   ├── package.json
+    │   └── server.js
+    │
+    └── client/                  # React Frontend
+        ├── src/
+        │   ├── api/
+        │   │   └── axios.js
+        │   ├── context/
+        │   │   └── AuthContext.jsx
+        │   ├── components/
+        │   │   ├── Navbar.jsx
+        │   │   └── ProtectedRoute.jsx
+        │   ├── pages/
+        │   │   ├── Auth/Login.jsx
+        │   │   ├── Dashboard/Dashboard.jsx
+        │   │   ├── Rooms/
+        │   │   ├── Guests/
+        │   │   ├── Bookings/
+        │   │   └── Invoices/
+        │   ├── App.jsx
+        │   └── main.jsx
+        └── package.json
 
 
 ---
