@@ -20,12 +20,13 @@ const AddBooking = () => {
         const fetchData = async () => {
             try {
                 const [guestsRes, roomsRes] = await Promise.all([
-                    API.get("/guests"),
-                    API.get("/rooms", { params: { status: "Available" } }),
+                    API.get("/guests", { params: { limit: 50 } }),
+                    API.get("/rooms", { params: { status: "Available", limit: 50 } }),
                 ]);
-                setGuests(guestsRes.data);
-                setRooms(roomsRes.data);
-            } catch (err) {
+                setGuests(guestsRes.data.guests);
+                setRooms(roomsRes.data.rooms);
+            } catch (error) {
+                console.log(error);
                 setError("Failed to load guests or rooms");
             }
         };
@@ -47,7 +48,8 @@ const AddBooking = () => {
                 params: { roomId: form.room, checkIn: form.checkIn, checkOut: form.checkOut },
             });
             setAvailability(res.data.available);
-        } catch (err) {
+        } catch (error) {
+            console.log(error);
             alert("Failed to check availability");
         }
     };
@@ -131,10 +133,10 @@ const AddBooking = () => {
                     </button>
 
                     {availability === true && (
-                        <div style={styles.available}>✅ Room is available for selected dates</div>
+                        <div style={styles.available}>Room is available for selected dates</div>
                     )}
                     {availability === false && (
-                        <div style={styles.notAvailable}>❌ Room is not available for selected dates</div>
+                        <div style={styles.notAvailable}>Room is not available for selected dates</div>
                     )}
 
                     <div style={styles.buttons}>

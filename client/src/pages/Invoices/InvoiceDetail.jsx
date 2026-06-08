@@ -2,6 +2,15 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../../api/axios";
 
+const printStyles = `
+  @media print {
+    body * { visibility: hidden; }
+    #invoice, #invoice * { visibility: visible; }
+    #invoice { position: fixed; top: 0; left: 0; width: 100%; }
+    .no-print { display: none !important; }
+  }
+`;
+
 const InvoiceDetail = () => {
     const [invoice, setInvoice] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -63,78 +72,81 @@ const InvoiceDetail = () => {
     }
 
     return (
-        <div style={styles.container}>
-            <div style={styles.actions}>
-                <button onClick={() => navigate("/invoices")} style={styles.backBtn}>
-                    ← Back
-                </button>
-                <button onClick={handlePrint} style={styles.printBtn}>
-                    🖨️ Print / Download PDF
-                </button>
+        <>
+            <style>{printStyles}</style>
+            <div style={styles.container}>
+                <div style={styles.actions} className="no-print">
+                    <button onClick={() => navigate("/invoices")} style={styles.backBtn}>
+                        ← Back
+                    </button>
+                    <button onClick={handlePrint} style={styles.printBtn}>
+                        🖨️ Print / Download PDF
+                    </button>
+                </div>
+
+                <div style={styles.invoice} id="invoice">
+                    <div style={styles.invoiceHeader}>
+                        <h1 style={styles.hotelName}>🏨 Hotel Management</h1>
+                        <h2 style={styles.invoiceTitle}>INVOICE</h2>
+                    </div>
+
+                    <div style={styles.divider} />
+
+                    <div style={styles.row}>
+                        <span style={styles.label}>Invoice Date</span>
+                        <span style={styles.value}>{new Date(invoice.invoiceDate).toLocaleDateString()}</span>
+                    </div>
+
+                    <div style={styles.divider} />
+
+                    <div style={styles.row}>
+                        <span style={styles.label}>Guest Name</span>
+                        <span style={styles.value}>{invoice.guestName}</span>
+                    </div>
+                    <div style={styles.row}>
+                        <span style={styles.label}>Room No</span>
+                        <span style={styles.value}>{invoice.roomNumber}</span>
+                    </div>
+                    <div style={styles.row}>
+                        <span style={styles.label}>Room Type</span>
+                        <span style={styles.value}>{invoice.roomType}</span>
+                    </div>
+
+                    <div style={styles.divider} />
+
+                    <div style={styles.row}>
+                        <span style={styles.label}>Check In</span>
+                        <span style={styles.value}>{new Date(invoice.checkIn).toLocaleDateString()}</span>
+                    </div>
+                    <div style={styles.row}>
+                        <span style={styles.label}>Check Out</span>
+                        <span style={styles.value}>{new Date(invoice.checkOut).toLocaleDateString()}</span>
+                    </div>
+                    <div style={styles.row}>
+                        <span style={styles.label}>Days</span>
+                        <span style={styles.value}>{invoice.days}</span>
+                    </div>
+
+                    <div style={styles.divider} />
+
+                    <div style={styles.row}>
+                        <span style={styles.label}>Price Per Night</span>
+                        <span style={styles.value}>Rs. {invoice.pricePerNight?.toLocaleString()}</span>
+                    </div>
+
+                    <div style={styles.divider} />
+
+                    <div style={{ ...styles.row, ...styles.totalRow }}>
+                        <span style={styles.totalLabel}>Total Amount</span>
+                        <span style={styles.totalValue}>Rs. {invoice.totalAmount?.toLocaleString()}</span>
+                    </div>
+
+                    <div style={styles.divider} />
+
+                    <p style={styles.footer}>Thank you for staying with us!</p>
+                </div>
             </div>
-
-            <div style={styles.invoice} id="invoice">
-                <div style={styles.invoiceHeader}>
-                    <h1 style={styles.hotelName}>🏨 Hotel Management</h1>
-                    <h2 style={styles.invoiceTitle}>INVOICE</h2>
-                </div>
-
-                <div style={styles.divider} />
-
-                <div style={styles.row}>
-                    <span style={styles.label}>Invoice Date</span>
-                    <span style={styles.value}>{new Date(invoice.invoiceDate).toLocaleDateString()}</span>
-                </div>
-
-                <div style={styles.divider} />
-
-                <div style={styles.row}>
-                    <span style={styles.label}>Guest Name</span>
-                    <span style={styles.value}>{invoice.guestName}</span>
-                </div>
-                <div style={styles.row}>
-                    <span style={styles.label}>Room No</span>
-                    <span style={styles.value}>{invoice.roomNumber}</span>
-                </div>
-                <div style={styles.row}>
-                    <span style={styles.label}>Room Type</span>
-                    <span style={styles.value}>{invoice.roomType}</span>
-                </div>
-
-                <div style={styles.divider} />
-
-                <div style={styles.row}>
-                    <span style={styles.label}>Check In</span>
-                    <span style={styles.value}>{new Date(invoice.checkIn).toLocaleDateString()}</span>
-                </div>
-                <div style={styles.row}>
-                    <span style={styles.label}>Check Out</span>
-                    <span style={styles.value}>{new Date(invoice.checkOut).toLocaleDateString()}</span>
-                </div>
-                <div style={styles.row}>
-                    <span style={styles.label}>Days</span>
-                    <span style={styles.value}>{invoice.days}</span>
-                </div>
-
-                <div style={styles.divider} />
-
-                <div style={styles.row}>
-                    <span style={styles.label}>Price Per Night</span>
-                    <span style={styles.value}>Rs. {invoice.pricePerNight?.toLocaleString()}</span>
-                </div>
-
-                <div style={styles.divider} />
-
-                <div style={{ ...styles.row, ...styles.totalRow }}>
-                    <span style={styles.totalLabel}>Total Amount</span>
-                    <span style={styles.totalValue}>Rs. {invoice.totalAmount?.toLocaleString()}</span>
-                </div>
-
-                <div style={styles.divider} />
-
-                <p style={styles.footer}>Thank you for staying with us!</p>
-            </div>
-        </div>
+        </>
     );
 };
 
