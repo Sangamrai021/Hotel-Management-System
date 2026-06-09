@@ -1,17 +1,38 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import API from "../../api/axios";
 
-const AddRoom = () => {
+const EditRoom = () => {
     const [form, setForm] = useState({
         roomNumber: "",
         roomType: "Standard",
         pricePerNight: "",
         description: "",
+        status: "Available",
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { id } = useParams();
+
+    useEffect(() => {
+        const fetchRoom = async () => {
+            try {
+                const res = await API.get(`/rooms/${id}`);
+                setForm({
+                    roomNumber: res.data.roomNumber,
+                    roomType: res.data.roomType,
+                    pricePerNight: res.data.pricePerNight,
+                    description: res.data.description,
+                    status: res.data.status,
+                });
+            } catch (error) {
+                console.log(error);
+                setError("Failed to load room");
+            }
+        };
+        fetchRoom();
+    }, [id]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,10 +43,10 @@ const AddRoom = () => {
         setError("");
         setLoading(true);
         try {
-            await API.post("/rooms", form);
+            await API.put(`/rooms/${id}`, form);
             navigate("/rooms");
         } catch (err) {
-            setError(err.response?.data?.message || "Failed to add room");
+            setError(err.response?.data?.message || "Failed to update room");
         } finally {
             setLoading(false);
         }
@@ -34,7 +55,7 @@ const AddRoom = () => {
     return (
         <div style={styles.container}>
             <div style={styles.card}>
-                <h2 style={styles.title}>Add Room</h2>
+                <h2 style={styles.title}>Edit Room</h2>
 
                 {error && <div style={styles.error}>{error}</div>}
 
@@ -46,9 +67,8 @@ const AddRoom = () => {
                             value={form.roomNumber}
                             onChange={handleChange}
                             style={styles.input}
-                            placeholder="e.g. 101"
-                            pattern="^[a-zA-Z0-9-]+$"
-                            title="Room number can only contain letters, numbers and hyphens"
+                            pattern="^(?=.*[0-9])[a-zA-Z0-9-]+$"
+                            title="Room number must contain at least one number"
                             required
                         />
                     </div>
@@ -70,7 +90,6 @@ const AddRoom = () => {
                             value={form.pricePerNight}
                             onChange={handleChange}
                             style={styles.input}
-                            placeholder="e.g. 5000"
                             required
                         />
                     </div>
@@ -82,8 +101,15 @@ const AddRoom = () => {
                             value={form.description}
                             onChange={handleChange}
                             style={{ ...styles.input, height: "80px", resize: "vertical" }}
-                            placeholder="e.g. Sea facing room with balcony"
                         />
+                    </div>
+
+                    <div style={styles.field}>
+                        <label style={styles.label}>Status</label>
+                        <select name="status" value={form.status} onChange={handleChange} style={styles.input}>
+                            <option value="Available">Available</option>
+                            <option value="Occupied">Occupied</option>
+                        </select>
                     </div>
 
                     <div style={styles.buttons}>
@@ -91,7 +117,7 @@ const AddRoom = () => {
                             Cancel
                         </button>
                         <button type="submit" style={styles.submitBtn} disabled={loading}>
-                            {loading ? "Adding..." : "Add Room"}
+                            {loading ? "Updating..." : "Update Room"}
                         </button>
                     </div>
                 </form>
@@ -113,4 +139,4 @@ const styles = {
     submitBtn: { flex: 1, padding: "10px", backgroundColor: "#1a1a2e", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "15px" },
 };
 
-export default AddRoom;
+export default EditRoom;
