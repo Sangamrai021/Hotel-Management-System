@@ -1,7 +1,10 @@
 import axios from "axios";
 
+// const API = axios.create({
+//   baseURL: "http://localhost:9000/api",
+// });
 const API = axios.create({
-  baseURL: "http://localhost:9000/api",
+  baseURL: "https://hotel-management-system-8n2a.onrender.com/api",
 });
 
 // Automatically attach token to every request
