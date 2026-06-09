@@ -182,7 +182,8 @@ npm run dev
 ```
 
 ### 6. Open in browser
-[link](http://localhost:5173)
+[Frontend](https://hotel-management-system-sable-eight.vercel.app)
+[Backend](https://hotel-management-system-8n2a.onrender.com)
 
 ### 7. Login credentials
 Email:    admin@gmail.com
