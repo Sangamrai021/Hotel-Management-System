@@ -31,7 +31,7 @@ const Login = () => {
     return (
         <div style={styles.container}>
             <div style={styles.card}>
-                <h2 style={styles.title}>Hotel Management</h2>
+                <h1 style={styles.title}>Hotel Management</h1>
                 <p style={styles.subtitle}>Admin Login</p>
 
                 {error && <div style={styles.error}>{error}</div>}
