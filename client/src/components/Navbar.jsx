@@ -15,15 +15,49 @@ const Navbar = () => {
 
     return (
         <>
+            <style>{`
+                .navbar-link,
+                .navbar-logout {
+                    transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, border-color 0.18s ease;
+                }
+
+                .navbar-link:hover {
+                    background-color: rgba(255, 255, 255, 0.18);
+                    color: #ffffff;
+                    transform: translateY(-2px) scale(1.03);
+                    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+                    border: 1px solid rgba(255, 255, 255, 0.18);
+                    border-radius: 6px;
+                }
+
+                .navbar-link:active,
+                .navbar-logout:active {
+                    transform: translateY(0) scale(0.98);
+                    box-shadow: none;
+                }
+
+                .navbar-link:focus-visible,
+                .navbar-logout:focus-visible {
+                    outline: 2px solid #f4a261;
+                    outline-offset: 3px;
+                }
+
+                .navbar-logout:hover {
+                    background-color: #ff5c6a;
+                    transform: translateY(-2px) scale(1.03);
+                    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+                    filter: saturate(1.05);
+                }
+            `}</style>
             <nav style={styles.nav}>
                 <div style={styles.brand}>Everest View Hotel</div>
                 <div style={styles.links}>
-                    <Link to="/" style={styles.link}>Dashboard</Link>
-                    <Link to="/rooms" style={styles.link}>Rooms</Link>
-                    <Link to="/guests" style={styles.link}>Guests</Link>
-                    <Link to="/bookings" style={styles.link}>Bookings</Link>
-                    <Link to="/invoices" style={styles.link}>Invoices</Link>
-                    <button onClick={() => setShowModal(true)} style={styles.logout}>Logout</button>
+                    <Link to="/" className="navbar-link" style={styles.link}>Dashboard</Link>
+                    <Link to="/rooms" className="navbar-link" style={styles.link}>Rooms</Link>
+                    <Link to="/guests" className="navbar-link" style={styles.link}>Guests</Link>
+                    <Link to="/bookings" className="navbar-link" style={styles.link}>Bookings</Link>
+                    <Link to="/invoices" className="navbar-link" style={styles.link}>Invoices</Link>
+                    <button onClick={() => setShowModal(true)} className="navbar-logout" style={styles.logout}>Logout</button>
                 </div>
             </nav>
 
@@ -71,11 +105,14 @@ const styles = {
         color: "white",
         textDecoration: "none",
         fontSize: "15px",
+        padding: "8px 12px",
+        borderRadius: "6px",
+        border: "1px solid transparent",
     },
     logout: {
         backgroundColor: "#e63946",
         color: "white",
-        border: "none",
+        border: "1px solid transparent",
         padding: "8px 16px",
         borderRadius: "6px",
         cursor: "pointer",
