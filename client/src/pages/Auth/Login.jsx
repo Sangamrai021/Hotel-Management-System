@@ -61,7 +61,7 @@ const Login = () => {
                         />
                     </div>
 
-                    <button type="submit" style={styles.button} disabled={loading}>
+                    <button type="submit" className="shared-login-btn" style={styles.button} disabled={loading}>
                         {loading ? "Logging in..." : "Login"}
                     </button>
                 </form>
