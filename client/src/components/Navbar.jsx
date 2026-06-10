@@ -48,6 +48,34 @@ const Navbar = () => {
                     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
                     filter: saturate(1.05);
                 }
+
+                .logout-modal-btn {
+                    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background-color 0.18s ease;
+                }
+
+                .logout-modal-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+                    filter: brightness(1.04);
+                }
+
+                .logout-modal-btn:active {
+                    transform: translateY(0) scale(0.98);
+                    box-shadow: none;
+                }
+
+                .logout-modal-btn:focus-visible {
+                    outline: 2px solid #f4a261;
+                    outline-offset: 3px;
+                }
+
+                .logout-cancel-btn:hover {
+                    background-color: #e2e2e2;
+                }
+
+                .logout-confirm-btn:hover {
+                    background-color: #d62839;
+                }
             `}</style>
             <nav style={styles.nav}>
                 <div style={styles.brand}>Everest View Hotel</div>
@@ -67,10 +95,10 @@ const Navbar = () => {
                         <h3 style={styles.modalTitle}>Confirm Logout</h3>
                         <p style={styles.modalText}>Are you sure you want to logout?</p>
                         <div style={styles.modalButtons}>
-                            <button onClick={() => setShowModal(false)} style={styles.cancelBtn}>
+                            <button onClick={() => setShowModal(false)} className="logout-modal-btn logout-cancel-btn" style={styles.cancelBtn}>
                                 Cancel
                             </button>
-                            <button onClick={handleLogout} style={styles.confirmBtn}>
+                            <button onClick={handleLogout} className="logout-modal-btn logout-confirm-btn" style={styles.confirmBtn}>
                                 Yes, Logout
                             </button>
                         </div>
