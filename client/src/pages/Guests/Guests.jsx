@@ -152,21 +152,25 @@ const Guests = () => {
                     </table>
 
                     <div style={styles.pagination}>
-                        <button
-                            onClick={() => fetchGuests(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            style={styles.pageBtn}
-                        >
-                            ← Previous
-                        </button>
-                        <span style={styles.pageInfo}>Page {currentPage} of {totalPages}</span>
-                        <button
-                            onClick={() => fetchGuests(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            style={styles.pageBtn}
-                        >
-                            Next →
-                        </button>
+                        <span style={styles.pageInfo}>Showing page {currentPage} of {totalPages}</span>
+                        <div style={styles.paginationControls}>
+                            <button
+                                onClick={() => fetchGuests(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="shared-page-btn"
+                                style={styles.pageBtn}
+                            >
+                                ← Previous
+                            </button>
+                            <button
+                                onClick={() => fetchGuests(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="shared-page-btn"
+                                style={styles.pageBtn}
+                            >
+                                Next →
+                            </button>
+                        </div>
                     </div>
                 </>
             )}
@@ -191,9 +195,10 @@ const styles = {
     deleteBtn: { backgroundColor: "#e63946", color: "white", border: "none", padding: "6px 14px", borderRadius: "6px", cursor: "pointer" },
     empty: { textAlign: "center", padding: "40px", color: "#666" },
     center: { display: "flex", justifyContent: "center", alignItems: "center", height: "80vh", fontSize: "18px" },
-    pagination: { display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", marginTop: "24px" },
+    pagination: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginTop: "24px" },
+    paginationControls: { display: "flex", alignItems: "center", gap: "12px" },
     pageBtn: { padding: "8px 20px", backgroundColor: "#1a1a2e", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px" },
-    pageInfo: { fontSize: "14px", color: "#333" },
+    pageInfo: { fontSize: "14px", color: "#333", fontWeight: "500" },
 };
 
 export default Guests;

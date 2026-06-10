@@ -100,3 +100,28 @@ body {
   outline: 2px solid #f4a261;
   outline-offset: 3px;
 }
+
+.shared-page-btn {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background-color 0.18s ease;
+}
+
+.shared-page-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+  filter: brightness(1.05);
+}
+
+.shared-page-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+}
+
+.shared-page-btn:focus-visible {
+  outline: 2px solid #f4a261;
+  outline-offset: 3px;
+}
+
+.shared-page-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
