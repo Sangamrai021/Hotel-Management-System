@@ -11,7 +11,8 @@ const Dashboard = () => {
             try {
                 const res = await API.get("/dashboard/stats");
                 setStats(res.data);
-            } catch (err) {
+            } catch (error) {
+                console.log(error);
                 setError("Failed to load dashboard stats");
             } finally {
                 setLoading(false);
@@ -34,10 +35,27 @@ const Dashboard = () => {
 
     return (
         <div style={styles.container}>
+            <style>{`
+                .dashboard-card {
+                    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+                    cursor: pointer;
+                }
+
+                .dashboard-card:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+                    background-color: #fafbff;
+                }
+
+                .dashboard-card:focus-visible {
+                    outline: 2px solid #1a1a2e;
+                    outline-offset: 3px;
+                }
+            `}</style>
             <h2 style={styles.title}>Dashboard</h2>
             <div style={styles.grid}>
                 {cards.map((card, index) => (
-                    <div key={index} style={{ ...styles.card, borderTop: `4px solid ${card.color}` }}>
+                    <div key={index} className="dashboard-card" tabIndex={0} style={{ ...styles.card, borderTop: `4px solid ${card.color}` }}>
                         <div style={styles.cardValue}>{card.value}</div>
                         <div style={styles.cardLabel}>{card.label}</div>
                     </div>
