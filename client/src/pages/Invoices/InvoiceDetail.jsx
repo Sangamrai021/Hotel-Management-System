@@ -79,7 +79,7 @@ const InvoiceDetail = () => {
                     <button onClick={() => navigate("/invoices")} style={styles.backBtn}>
                         ← Back
                     </button>
-                    <button onClick={handlePrint} style={styles.printBtn}>
+                    <button onClick={handlePrint} className="shared-print-btn" style={styles.printBtn}>
                         🖨️ Print / Download PDF
                     </button>
                 </div>

@@ -63,13 +63,11 @@ const Rooms = () => {
     return (
         <div style={styles.container}>
             <style>{`
-                .rooms-add-btn,
                 .rooms-edit-btn,
                 .rooms-delete-btn {
                     transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background-color 0.18s ease;
                 }
 
-                .rooms-add-btn:hover,
                 .rooms-edit-btn:hover,
                 .rooms-delete-btn:hover {
                     transform: translateY(-2px);
@@ -77,14 +75,12 @@ const Rooms = () => {
                     filter: brightness(1.05);
                 }
 
-                .rooms-add-btn:active,
                 .rooms-edit-btn:active,
                 .rooms-delete-btn:active {
                     transform: translateY(0) scale(0.98);
                     box-shadow: none;
                 }
 
-                .rooms-add-btn:focus-visible,
                 .rooms-edit-btn:focus-visible,
                 .rooms-delete-btn:focus-visible {
                     outline: 2px solid #f4a261;
@@ -125,7 +121,7 @@ const Rooms = () => {
                     </select>
                 </div>
 
-                <button onClick={() => navigate("/rooms/add")} className="rooms-add-btn" style={styles.addButton}>
+                <button onClick={() => navigate("/rooms/add")} className="shared-add-btn" style={styles.addButton}>
                     + Add Room
                 </button>
             </div>

@@ -76,27 +76,6 @@ const Bookings = () => {
 
     return (
         <div style={styles.container}>
-            <style>{`
-                .bookings-add-btn {
-                    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background-color 0.18s ease;
-                }
-
-                .bookings-add-btn:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
-                    filter: brightness(1.05);
-                }
-
-                .bookings-add-btn:active {
-                    transform: translateY(0) scale(0.98);
-                    box-shadow: none;
-                }
-
-                .bookings-add-btn:focus-visible {
-                    outline: 2px solid #f4a261;
-                    outline-offset: 3px;
-                }
-            `}</style>
             <div style={styles.header}>
                 <h2 style={styles.title}>Bookings</h2>
             </div>
@@ -112,7 +91,7 @@ const Bookings = () => {
                     </select>
                 </div>
 
-                <button onClick={() => navigate("/bookings/add")} className="bookings-add-btn" style={styles.addButton}>
+                <button onClick={() => navigate("/bookings/add")} className="shared-add-btn" style={styles.addButton}>
                     + Add Booking
                 </button>
             </div>

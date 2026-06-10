@@ -12,7 +12,7 @@ const Invoices = () => {
             try {
                 const res = await API.get("/invoices");
                 setInvoices(res.data);
-            } catch (err) {
+            } catch {
                 console.error("Failed to fetch invoices");
             } finally {
                 setLoading(false);
@@ -58,6 +58,7 @@ const Invoices = () => {
                                 <td style={styles.td}>
                                     <button
                                         onClick={() => navigate(`/invoices/${invoice.booking}`)}
+                                        className="shared-view-btn"
                                         style={styles.viewBtn}
                                     >
                                         View
