@@ -62,6 +62,43 @@ const Rooms = () => {
 
     return (
         <div style={styles.container}>
+            <style>{`
+                .rooms-add-btn,
+                .rooms-edit-btn,
+                .rooms-delete-btn {
+                    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background-color 0.18s ease;
+                }
+
+                .rooms-add-btn:hover,
+                .rooms-edit-btn:hover,
+                .rooms-delete-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+                    filter: brightness(1.05);
+                }
+
+                .rooms-add-btn:active,
+                .rooms-edit-btn:active,
+                .rooms-delete-btn:active {
+                    transform: translateY(0) scale(0.98);
+                    box-shadow: none;
+                }
+
+                .rooms-add-btn:focus-visible,
+                .rooms-edit-btn:focus-visible,
+                .rooms-delete-btn:focus-visible {
+                    outline: 2px solid #f4a261;
+                    outline-offset: 3px;
+                }
+
+                .rooms-edit-btn:hover {
+                    background-color: #5775f2;
+                }
+
+                .rooms-delete-btn:hover {
+                    background-color: #ff4d5a;
+                }
+            `}</style>
             <div style={styles.header}>
                 <h2 style={styles.title}>Rooms</h2>
             </div>
@@ -88,7 +125,7 @@ const Rooms = () => {
                     </select>
                 </div>
 
-                <button onClick={() => navigate("/rooms/add")} style={styles.addButton}>
+                <button onClick={() => navigate("/rooms/add")} className="rooms-add-btn" style={styles.addButton}>
                     + Add Room
                 </button>
             </div>
@@ -123,10 +160,10 @@ const Rooms = () => {
                                         </span>
                                     </td>
                                     <td style={styles.td}>
-                                        <button onClick={() => navigate(`/rooms/edit/${room._id}`)} style={styles.editBtn}>
+                                        <button onClick={() => navigate(`/rooms/edit/${room._id}`)} className="rooms-edit-btn" style={styles.editBtn}>
                                             Edit
                                         </button>
-                                        <button onClick={() => handleDelete(room._id)} style={styles.deleteBtn}>
+                                        <button onClick={() => handleDelete(room._id)} className="rooms-delete-btn" style={styles.deleteBtn}>
                                             Delete
                                         </button>
                                     </td>
