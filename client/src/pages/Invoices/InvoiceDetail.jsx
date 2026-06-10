@@ -86,7 +86,7 @@ const InvoiceDetail = () => {
 
                 <div style={styles.invoice} id="invoice">
                     <div style={styles.invoiceHeader}>
-                        <h1 style={styles.hotelName}>Hotel Management</h1>
+                        <h1 style={styles.hotelName}>Everest View Hotel</h1>
                         <h2 style={styles.invoiceTitle}>INVOICE</h2>
                     </div>
 
