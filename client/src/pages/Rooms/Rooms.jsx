@@ -29,8 +29,23 @@ const Rooms = () => {
     };
 
     useEffect(() => {
-        setCurrentPage(1);
-        fetchRooms(1);
+        const loadRooms = async () => {
+            try {
+                const res = await API.get("/rooms", {
+                    params: { search, roomType, status, page: 1, limit: 10 },
+                });
+                setRooms(res.data.rooms);
+                setTotalPages(res.data.totalPages);
+                setCurrentPage(res.data.currentPage || 1);
+            } catch (error) {
+                console.log(error);
+                console.error("Failed to fetch rooms");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadRooms();
     }, [search, roomType, status]);
 
     const handleDelete = async (id) => {
@@ -49,30 +64,33 @@ const Rooms = () => {
         <div style={styles.container}>
             <div style={styles.header}>
                 <h2 style={styles.title}>Rooms</h2>
+            </div>
+
+            <div style={styles.controlsRow}>
+                <div style={styles.filters}>
+                    <input
+                        type="text"
+                        placeholder="Search by room number..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        style={styles.input}
+                    />
+                    <select value={roomType} onChange={(e) => setRoomType(e.target.value)} style={styles.select}>
+                        <option value="">All Types</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Deluxe">Deluxe</option>
+                        <option value="Suite">Suite</option>
+                    </select>
+                    <select value={status} onChange={(e) => setStatus(e.target.value)} style={styles.select}>
+                        <option value="">All Status</option>
+                        <option value="Available">Available</option>
+                        <option value="Occupied">Occupied</option>
+                    </select>
+                </div>
+
                 <button onClick={() => navigate("/rooms/add")} style={styles.addButton}>
                     + Add Room
                 </button>
-            </div>
-
-            <div style={styles.filters}>
-                <input
-                    type="text"
-                    placeholder="Search by room number..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    style={styles.input}
-                />
-                <select value={roomType} onChange={(e) => setRoomType(e.target.value)} style={styles.select}>
-                    <option value="">All Types</option>
-                    <option value="Standard">Standard</option>
-                    <option value="Deluxe">Deluxe</option>
-                    <option value="Suite">Suite</option>
-                </select>
-                <select value={status} onChange={(e) => setStatus(e.target.value)} style={styles.select}>
-                    <option value="">All Status</option>
-                    <option value="Available">Available</option>
-                    <option value="Occupied">Occupied</option>
-                </select>
             </div>
 
             {rooms.length === 0 ? (
@@ -142,10 +160,11 @@ const Rooms = () => {
 
 const styles = {
     container: { padding: "24px" },
-    header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" },
+    header: { display: "flex", alignItems: "center", marginBottom: "12px" },
     title: { fontSize: "24px", color: "#1a1a2e" },
-    addButton: { backgroundColor: "#1a1a2e", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontSize: "15px" },
-    filters: { display: "flex", gap: "12px", marginBottom: "20px" },
+    controlsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "20px" },
+    addButton: { backgroundColor: "#1a1a2e", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontSize: "15px", flexShrink: 0, whiteSpace: "nowrap" },
+    filters: { display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center", flex: 1 },
     input: { padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", width: "220px" },
     select: { padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" },
     table: { width: "100%", borderCollapse: "collapse", backgroundColor: "white", borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.08)" },

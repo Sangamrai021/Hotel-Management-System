@@ -78,19 +78,22 @@ const Bookings = () => {
         <div style={styles.container}>
             <div style={styles.header}>
                 <h2 style={styles.title}>Bookings</h2>
+            </div>
+
+            <div style={styles.controlsRow}>
+                <div style={styles.filters}>
+                    <select value={status} onChange={(e) => setStatus(e.target.value)} style={styles.select}>
+                        <option value="">All Status</option>
+                        <option value="Booked">Booked</option>
+                        <option value="CheckedIn">CheckedIn</option>
+                        <option value="CheckedOut">CheckedOut</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+
                 <button onClick={() => navigate("/bookings/add")} style={styles.addButton}>
                     + Add Booking
                 </button>
-            </div>
-
-            <div style={styles.filters}>
-                <select value={status} onChange={(e) => setStatus(e.target.value)} style={styles.select}>
-                    <option value="">All Status</option>
-                    <option value="Booked">Booked</option>
-                    <option value="CheckedIn">CheckedIn</option>
-                    <option value="CheckedOut">CheckedOut</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
             </div>
 
             {bookings.length === 0 ? (
@@ -187,10 +190,11 @@ const Bookings = () => {
 
 const styles = {
     container: { padding: "24px" },
-    header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" },
+    header: { display: "flex", alignItems: "center", marginBottom: "12px" },
     title: { fontSize: "24px", color: "#1a1a2e" },
-    addButton: { backgroundColor: "#1a1a2e", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontSize: "15px" },
-    filters: { display: "flex", gap: "12px", marginBottom: "20px" },
+    controlsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "20px" },
+    addButton: { backgroundColor: "#1a1a2e", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontSize: "15px", flexShrink: 0, whiteSpace: "nowrap" },
+    filters: { display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center", flex: 1 },
     select: { padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" },
     table: { width: "100%", borderCollapse: "collapse", backgroundColor: "white", borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.08)" },
     thead: { backgroundColor: "#1a1a2e" },
