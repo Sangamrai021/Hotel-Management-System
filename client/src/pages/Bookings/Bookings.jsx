@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/axios";
+import Button from "../../components/Button";
 
 const Bookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -15,7 +16,7 @@ const Bookings = () => {
             const res = await API.get("/bookings", { params: { status, page, limit: 10 } });
             setBookings(res.data.bookings);
             setTotalPages(res.data.totalPages);
-            setCurrentPage(res.data.currentPage);
+            setCurrentPage(res.data.currentPage || page);
         } catch (error) {
             console.log(error);
             console.error("Failed to fetch bookings");
@@ -25,8 +26,21 @@ const Bookings = () => {
     };
 
     useEffect(() => {
-        setCurrentPage(1);
-        fetchBookings(1);
+        const loadBookings = async () => {
+            try {
+                const res = await API.get("/bookings", { params: { status, page: 1, limit: 10 } });
+                setBookings(res.data.bookings);
+                setTotalPages(res.data.totalPages);
+                setCurrentPage(res.data.currentPage || 1);
+            } catch (error) {
+                console.log(error);
+                console.error("Failed to fetch bookings");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadBookings();
     }, [status]);
 
     const handleStatusChange = async (id, newStatus) => {
@@ -113,32 +127,35 @@ const Bookings = () => {
                                             </span>
                                         </td>
                                         <td style={styles.td}>
-                                            {booking.status === "Booked" && (
-                                                <button onClick={() => handleStatusChange(booking._id, "CheckedIn")} style={styles.checkinBtn}>
-                                                    Check In
-                                                </button>
-                                            )}
-                                            {booking.status === "CheckedIn" && (
-                                                <button onClick={() => handleStatusChange(booking._id, "CheckedOut")} style={styles.checkoutBtn}>
-                                                    Check Out
-                                                </button>
-                                            )}
-                                            {booking.status === "CheckedOut" && (
-                                                <button onClick={() => navigate(`/invoices/${booking._id}`)} style={styles.invoiceBtn}>
-                                                    Invoice
-                                                </button>
-                                            )}
-                                            {booking.status === "Booked" && (
-                                                <button onClick={() => handleStatusChange(booking._id, "Cancelled")} style={styles.cancelBtn}>
-                                                    Cancel
-                                                </button>
-                                            )}
-                                            {booking.status !== "CheckedIn" && (
-                                                <button onClick={() => handleDelete(booking._id)} style={styles.deleteBtn}>
-                                                    Delete
-                                                </button>
-                                            )}
+                                            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                                                {booking.status === "Booked" && (
+                                                    <Button color="#2a9d8f" size="sm" minWidth="110px" onClick={() => handleStatusChange(booking._id, "CheckedIn")}>
+                                                        Check In
+                                                    </Button>
+                                                )}
+                                                {booking.status === "CheckedIn" && (
+                                                    <Button color="#e9c46a" textColor="#333" size="sm" minWidth="110px" onClick={() => handleStatusChange(booking._id, "CheckedOut")}>
+                                                        Check Out
+                                                    </Button>
+                                                )}
+                                                {booking.status === "CheckedOut" && (
+                                                    <Button color="#4361ee" size="sm" minWidth="110px" onClick={() => navigate(`/invoices/${booking._id}`)}>
+                                                        Invoice
+                                                    </Button>
+                                                )}
+                                                {booking.status === "Booked" && (
+                                                    <Button color="#f4a261" size="sm" minWidth="110px" onClick={() => handleStatusChange(booking._id, "Cancelled")}>
+                                                        Cancel
+                                                    </Button>
+                                                )}
+                                                {booking.status !== "CheckedIn" && (
+                                                    <Button color="#e63946" size="sm" minWidth="110px" onClick={() => handleDelete(booking._id)}>
+                                                        Delete
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </td>
+
                                     </tr>
                                 );
                             })}
@@ -180,11 +197,7 @@ const styles = {
     th: { padding: "14px 16px", textAlign: "left", color: "white", fontWeight: "600" },
     tr: { borderBottom: "1px solid #f0f0f0" },
     td: { padding: "12px 16px", color: "#333" },
-    badge: { padding: "4px 10px", borderRadius: "20px", fontSize: "13px", fontWeight: "500" },
-    checkinBtn: { backgroundColor: "#2a9d8f", color: "white", border: "none", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", marginRight: "6px", fontSize: "13px" },
-    checkoutBtn: { backgroundColor: "#e9c46a", color: "#333", border: "none", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", marginRight: "6px", fontSize: "13px" },
-    invoiceBtn: { backgroundColor: "#4361ee", color: "white", border: "none", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", marginRight: "6px", fontSize: "13px" },
-    cancelBtn: { backgroundColor: "#f4a261", color: "white", border: "none", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", marginRight: "6px", fontSize: "13px" },
+    badge: { minWidth: "110px", padding: "4px 10px", borderRadius: "20px", fontSize: "13px", fontWeight: "500", display: "inline-flex", justifyContent: "center", alignItems: "center" },
     deleteBtn: { backgroundColor: "#e63946", color: "white", border: "none", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "13px" },
     empty: { textAlign: "center", padding: "40px", color: "#666" },
     center: { display: "flex", justifyContent: "center", alignItems: "center", height: "80vh", fontSize: "18px" },
