@@ -56,6 +56,43 @@ const Guests = () => {
 
     return (
         <div style={styles.container}>
+            <style>{`
+                .guests-add-btn,
+                .guests-edit-btn,
+                .guests-delete-btn {
+                    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background-color 0.18s ease;
+                }
+
+                .guests-add-btn:hover,
+                .guests-edit-btn:hover,
+                .guests-delete-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+                    filter: brightness(1.05);
+                }
+
+                .guests-add-btn:active,
+                .guests-edit-btn:active,
+                .guests-delete-btn:active {
+                    transform: translateY(0) scale(0.98);
+                    box-shadow: none;
+                }
+
+                .guests-add-btn:focus-visible,
+                .guests-edit-btn:focus-visible,
+                .guests-delete-btn:focus-visible {
+                    outline: 2px solid #f4a261;
+                    outline-offset: 3px;
+                }
+
+                .guests-edit-btn:hover {
+                    background-color: #5775f2;
+                }
+
+                .guests-delete-btn:hover {
+                    background-color: #ff4d5a;
+                }
+            `}</style>
             <div style={styles.header}>
                 <h2 style={styles.title}>Guests</h2>
             </div>
@@ -71,7 +108,7 @@ const Guests = () => {
                     />
                 </div>
 
-                <button onClick={() => navigate("/guests/add")} style={styles.addButton}>
+                <button onClick={() => navigate("/guests/add")} className="guests-add-btn" style={styles.addButton}>
                     + Add Guest
                 </button>
             </div>
@@ -100,12 +137,14 @@ const Guests = () => {
                                     <td style={styles.td}>
                                         <button
                                             onClick={() => navigate(`/guests/edit/${guest._id}`)}
+                                            className="guests-edit-btn"
                                             style={styles.editBtn}
                                         >
                                             Edit
                                         </button>
                                         <button
                                             onClick={() => handleDelete(guest._id)}
+                                            className="guests-delete-btn"
                                             style={styles.deleteBtn}
                                         >
                                             Delete
