@@ -143,7 +143,7 @@ A full-stack Hotel Management System built with the MERN stack (MongoDB, Express
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/hotel-management-system.git
+git clone https://github.com/Sangamrai021/hotel-management-system.git
 cd hotel-management-system
 ```
 
@@ -155,7 +155,7 @@ npm install
 
 Create `.env` file inside `server/`:
 ```env
-MONGO_URI=your_mongodb_atlas_connection_string
+MONGO_URI=mongodb_atlas_connection_string
 JWT_SECRET=hotel_super_secret_key_2026
 PORT=9000
 ```
