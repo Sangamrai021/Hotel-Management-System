@@ -23,6 +23,7 @@ export const generateInvoice = async (req, res) => {
       booking: booking._id,
       guest: booking.guest._id,
       room: booking.room._id,
+      hotel: booking.hotel,
       guestName: booking.guest.name,
       roomNumber: booking.room.roomNumber,
       roomType: booking.room.roomType,

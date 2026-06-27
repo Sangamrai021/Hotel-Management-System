@@ -24,6 +24,14 @@ export const createBooking = async (req, res) => {
     const roomDoc = await Room.findById(room);
     if (!roomDoc) return res.status(404).json({ message: "Room not found" });
 
+    if (req.user.role !== "SuperAdmin" && roomDoc.hotel.toString() !== req.user.hotel.toString()) {
+      return res.status(403).json({ message: "You can only create bookings for your own hotel" });
+    }
+
+    if (guestDoc.hotel.toString() !== roomDoc.hotel.toString()) {
+      return res.status(400).json({ message: "Guest and room must belong to the same hotel" });
+    }
+
     const checkInDate = new Date(checkIn);
     const checkOutDate = new Date(checkOut);
 
@@ -35,6 +43,7 @@ export const createBooking = async (req, res) => {
       return res.status(400).json({ message: "Room is already booked for the selected dates" });
 
     const booking = await Booking.create({
+      hotel: roomDoc.hotel,
       guest,
       room,
       checkIn: checkInDate,

@@ -2,7 +2,18 @@ import Room from "../models/Room.js";
 
 export const createRoom = async (req, res) => {
   try {
-    const { roomNumber, roomType, pricePerNight, description } = req.body;
+    const { roomNumber, roomType, pricePerNight, description, hotel: hotelId } = req.body;
+    const hotel = req.user.role === "SuperAdmin" ? hotelId || req.user.hotel : req.user.hotel;
+
+    if (!hotel) {
+      return res.status(400).json({ message: "Hotel is required" });
+    }
+
+    if (!roomNumber || !roomType || pricePerNight == null) {
+      return res.status(400).json({
+        message: "Room number, room type and price per night are required",
+      });
+    }
 
     // Validate room number format
     if (!/^[a-zA-Z0-9-]+$/.test(roomNumber)) {
@@ -13,7 +24,7 @@ export const createRoom = async (req, res) => {
     if (exists)
       return res.status(400).json({ message: "Room number already exists" });
 
-    const room = await Room.create({ roomNumber, roomType, pricePerNight, description });
+    const room = await Room.create({ roomNumber, roomType, pricePerNight, description, hotel });
     res.status(201).json(room);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -60,10 +71,9 @@ export const updateRoom = async (req, res) => {
 
     const { roomNumber, roomType, pricePerNight, description, status } = req.body;
 
-    // Validate room number format
-    if (!/^(?=.*[0-9])[a-zA-Z0-9-]+$/.test(roomNumber)) {
-    return res.status(400).json({ message: "Room number must contain at least one number" });
-}
+    if (roomNumber && !/^(?=.*[0-9])[a-zA-Z0-9-]+$/.test(roomNumber)) {
+      return res.status(400).json({ message: "Room number must contain at least one number" });
+    }
 
     if (roomNumber && roomNumber !== room.roomNumber) {
       const exists = await Room.findOne({ roomNumber });

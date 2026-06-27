@@ -5,10 +5,17 @@ import Invoice from "../models/Invoice.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
-    const totalRooms = await Room.countDocuments();
-    const occupiedRooms = await Room.countDocuments({ status: "Occupied" });
+    const isSuperAdmin = req.user.role === "SuperAdmin";
+    const hotelFilter = isSuperAdmin ? {} : { hotel: req.user.hotel };
+
+    if (!isSuperAdmin && !req.user.hotel) {
+      return res.status(400).json({ message: "Hotel is required for this account" });
+    }
+
+    const totalRooms = await Room.countDocuments(hotelFilter);
+    const occupiedRooms = await Room.countDocuments({ ...hotelFilter, status: "Occupied" });
     const availableRooms = totalRooms - occupiedRooms;
-    const totalGuests = await Guest.countDocuments();
+    const totalGuests = await Guest.countDocuments(hotelFilter);
 
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -16,6 +23,7 @@ export const getDashboardStats = async (req, res) => {
     todayEnd.setHours(23, 59, 59, 999);
 
     const bookingsToday = await Booking.countDocuments({
+      ...hotelFilter,
       createdAt: { $gte: todayStart, $lte: todayEnd },
     });
 
@@ -24,7 +32,12 @@ export const getDashboardStats = async (req, res) => {
     monthStart.setHours(0, 0, 0, 0);
 
     const revenueResult = await Invoice.aggregate([
-      { $match: { invoiceDate: { $gte: monthStart } } },
+      {
+        $match: {
+          ...hotelFilter,
+          invoiceDate: { $gte: monthStart },
+        },
+      },
       { $group: { _id: null, total: { $sum: "$totalAmount" } } },
     ]);
     const revenueThisMonth = revenueResult[0]?.total || 0;

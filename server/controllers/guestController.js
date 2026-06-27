@@ -3,7 +3,18 @@ import Booking from "../models/Booking.js";
 
 export const createGuest = async (req, res) => {
   try {
-    const { name, email, phone, address, idProof, idNumber } = req.body;
+    const { name, email, phone, address, idProof, idNumber, hotel: hotelId } = req.body;
+    const hotel = req.user.role === "SuperAdmin" ? hotelId || req.user.hotel : req.user.hotel;
+
+    if (!hotel) {
+      return res.status(400).json({ message: "Hotel is required" });
+    }
+
+    if (!name || !email || !phone || !address || !idProof || !idNumber) {
+      return res.status(400).json({
+        message: "Name, email, phone, address, ID proof and ID number are required",
+      });
+    }
 
     if (!/^[a-zA-Z\s]+$/.test(name)) {
       return res.status(400).json({ message: "Name can only contain letters and spaces" });
@@ -25,7 +36,7 @@ export const createGuest = async (req, res) => {
     if (exists)
       return res.status(400).json({ message: "Guest with this email already exists" });
 
-    const guest = await Guest.create({ name, email, phone, address, idProof, idNumber });
+    const guest = await Guest.create({ name, email, phone, address, idProof, idNumber, hotel });
     res.status(201).json(guest);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -79,7 +90,7 @@ export const updateGuest = async (req, res) => {
       return res.status(400).json({ message: "Name can only contain letters and spaces" });
     }
 
-    if (!/^[^\s@]+@[^\s@]{4,}\.[^\s@]{2,}$/.test(email)) {
+    if (email && !/^[^\s@]+@[^\s@]{4,}\.[^\s@]{2,}$/.test(email)) {
         return res.status(400).json({ message: "Please enter a valid email address" });
     }
 
