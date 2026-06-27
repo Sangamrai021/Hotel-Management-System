@@ -16,6 +16,35 @@ const invoiceSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Room",
     },
+    hotel: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Hotel",
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Failed"],
+      default: "Pending",
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["Cash", "Khalti", "eSewa", null],
+      default: null,
+    },
+    transactionId: {
+      type: String,
+      default: null,
+    },
+    paidAt: {
+      type: Date,
+      default: null,
+    },
+    collectedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },  
+
     // Snapshots — frozen at invoice generation time
     guestName: { type: String, required: true },
     roomNumber: { type: String, required: true },

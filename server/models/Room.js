@@ -2,14 +2,16 @@ import mongoose from "mongoose";
 
 const roomSchema = new mongoose.Schema(
   {
+    hotel: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Hotel",
+      required: [true, "Hotel is required"],
+    },
     roomNumber: {
       type: String,
       required: [true, "Room number is required"],
-      unique: true,
       trim: true,
-      match: [/^(?=.*[0-9])[a-zA-Z0-9-]+$/, "Room number must contain at least one number"],
-
-
+      match: [/^[A-Za-z0-9]+$/, "Room number can only contain letters and numbers"],
     },
     roomType: {
       type: String,
