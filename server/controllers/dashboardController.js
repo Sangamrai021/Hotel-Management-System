@@ -5,17 +5,18 @@ import Invoice from "../models/Invoice.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
-    const isSuperAdmin = req.user.role === "SuperAdmin";
-    const hotelFilter = isSuperAdmin ? {} : { hotel: req.user.hotel };
+    // SuperAdmin sees all or filtered by hotelId
+    // Others see only their hotel
+    const hotelId = req.user.role === "SuperAdmin"
+      ? req.query.hotelId || null
+      : req.user.hotel;
 
-    if (!isSuperAdmin && !req.user.hotel) {
-      return res.status(400).json({ message: "Hotel is required for this account" });
-    }
+    const filter = hotelId ? { hotel: hotelId } : {};
 
-    const totalRooms = await Room.countDocuments(hotelFilter);
-    const occupiedRooms = await Room.countDocuments({ ...hotelFilter, status: "Occupied" });
+    const totalRooms = await Room.countDocuments(filter);
+    const occupiedRooms = await Room.countDocuments({ ...filter, status: "Occupied" });
     const availableRooms = totalRooms - occupiedRooms;
-    const totalGuests = await Guest.countDocuments(hotelFilter);
+    const totalGuests = await Guest.countDocuments(filter);
 
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -23,7 +24,7 @@ export const getDashboardStats = async (req, res) => {
     todayEnd.setHours(23, 59, 59, 999);
 
     const bookingsToday = await Booking.countDocuments({
-      ...hotelFilter,
+      ...filter,
       createdAt: { $gte: todayStart, $lte: todayEnd },
     });
 
@@ -32,15 +33,15 @@ export const getDashboardStats = async (req, res) => {
     monthStart.setHours(0, 0, 0, 0);
 
     const revenueResult = await Invoice.aggregate([
-      {
-        $match: {
-          ...hotelFilter,
-          invoiceDate: { $gte: monthStart },
-        },
-      },
+      { $match: { ...filter, invoiceDate: { $gte: monthStart }, paymentStatus: "Paid" } },
       { $group: { _id: null, total: { $sum: "$totalAmount" } } },
     ]);
     const revenueThisMonth = revenueResult[0]?.total || 0;
+
+    const pendingPayments = await Invoice.countDocuments({
+      ...filter,
+      paymentStatus: "Pending",
+    });
 
     res.json({
       totalRooms,
@@ -49,6 +50,7 @@ export const getDashboardStats = async (req, res) => {
       totalGuests,
       bookingsToday,
       revenueThisMonth,
+      pendingPayments,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
