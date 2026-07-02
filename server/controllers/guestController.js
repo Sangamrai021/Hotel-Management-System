@@ -3,40 +3,39 @@ import Booking from "../models/Booking.js";
 
 export const createGuest = async (req, res) => {
   try {
-    const { name, email, phone, address, idProof, idNumber, hotel: hotelId } = req.body;
-    const hotel = req.user.role === "SuperAdmin" ? hotelId || req.user.hotel : req.user.hotel;
+    const { name, email, phone, address, idProof, idNumber } = req.body;
 
-    if (!hotel) {
-      return res.status(400).json({ message: "Hotel is required" });
-    }
+    const hotelId = req.user.hotel;
+    if (!hotelId)
+      return res.status(400).json({ message: "No hotel assigned to your account" });
 
-    if (!name || !email || !phone || !address || !idProof || !idNumber) {
-      return res.status(400).json({
-        message: "Name, email, phone, address, ID proof and ID number are required",
-      });
-    }
-
-    if (!/^[a-zA-Z\s]+$/.test(name)) {
+    if (!/^[a-zA-Z\s]+$/.test(name))
       return res.status(400).json({ message: "Name can only contain letters and spaces" });
-    }
 
-    if (!/^[^\s@]+@[^\s@]{4,}\.[^\s@]{2,}$/.test(email)) {
-        return res.status(400).json({ message: "Please enter a valid email address" });
-    }
+    if (!/^[^\s@]+@[^\s@]{4,}\.[^\s@]{2,}$/.test(email))
+      return res.status(400).json({ message: "Please enter a valid email address" });
 
-    if (!/^(97|98)[0-9]{8}$/.test(phone)) {
-        return res.status(400).json({ message: "Phone number must start with 97 or 98 and be exactly 10 digits" });
-    }
+    if (!/^(97|98)[0-9]{8}$/.test(phone))
+      return res.status(400).json({ message: "Phone number must start with 97 or 98 and be exactly 10 digits" });
 
-    if (!/^[0-9]+$/.test(idNumber)) {
-        return res.status(400).json({ message: "ID number must contain numbers only" });
-    }
+    if (!/^[0-9]+$/.test(idNumber))
+      return res.status(400).json({ message: "ID number must contain numbers only" });
 
-    const exists = await Guest.findOne({ email });
+    // Email unique within same hotel
+    const exists = await Guest.findOne({ email, hotel: hotelId });
     if (exists)
-      return res.status(400).json({ message: "Guest with this email already exists" });
+      return res.status(400).json({ message: "Guest with this email already exists in your hotel" });
 
-    const guest = await Guest.create({ name, email, phone, address, idProof, idNumber, hotel });
+    const guest = await Guest.create({
+      hotel: hotelId,
+      name,
+      email,
+      phone,
+      address,
+      idProof,
+      idNumber,
+    });
+
     res.status(201).json(guest);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -46,7 +45,13 @@ export const createGuest = async (req, res) => {
 export const getAllGuests = async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
+
+    const hotelId = req.user.role === "SuperAdmin"
+      ? req.query.hotelId
+      : req.user.hotel;
+
     const filter = {};
+    if (hotelId) filter.hotel = hotelId;
 
     if (search) {
       filter.$or = [
@@ -59,6 +64,7 @@ export const getAllGuests = async (req, res) => {
     const total = await Guest.countDocuments(filter);
     const totalPages = Math.ceil(total / limit);
     const guests = await Guest.find(filter)
+      .populate("hotel", "name city")
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(Number(limit));
@@ -71,8 +77,13 @@ export const getAllGuests = async (req, res) => {
 
 export const getGuestById = async (req, res) => {
   try {
-    const guest = await Guest.findById(req.params.id);
+    const guest = await Guest.findById(req.params.id).populate("hotel", "name city");
     if (!guest) return res.status(404).json({ message: "Guest not found" });
+
+    if (req.user.role !== "SuperAdmin" &&
+      guest.hotel._id.toString() !== req.user.hotel.toString())
+      return res.status(403).json({ message: "Access denied" });
+
     res.json(guest);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -84,34 +95,36 @@ export const updateGuest = async (req, res) => {
     const guest = await Guest.findById(req.params.id);
     if (!guest) return res.status(404).json({ message: "Guest not found" });
 
-    const { name, email, idNumber, phone } = req.body;
+    if (req.user.role !== "SuperAdmin" &&
+      guest.hotel.toString() !== req.user.hotel.toString())
+      return res.status(403).json({ message: "Access denied" });
 
-    if (name && !/^[a-zA-Z\s]+$/.test(name)) {
+    const { name, email, phone, idNumber } = req.body;
+
+    if (name && !/^[a-zA-Z\s]+$/.test(name))
       return res.status(400).json({ message: "Name can only contain letters and spaces" });
-    }
 
-    if (email && !/^[^\s@]+@[^\s@]{4,}\.[^\s@]{2,}$/.test(email)) {
-        return res.status(400).json({ message: "Please enter a valid email address" });
-    }
+    if (email && !/^[^\s@]+@[^\s@]{4,}\.[^\s@]{2,}$/.test(email))
+      return res.status(400).json({ message: "Please enter a valid email address" });
 
-    if (phone && !/^(97|98)[0-9]{8}$/.test(phone)) {
-        return res.status(400).json({ message: "Phone number must start with 97 or 98 and be exactly 10 digits" });
-    }
+    if (phone && !/^(97|98)[0-9]{8}$/.test(phone))
+      return res.status(400).json({ message: "Phone must start with 97 or 98 and be 10 digits" });
 
-    if (idNumber && !/^[0-9]+$/.test(idNumber)) {
+    if (idNumber && !/^[0-9]+$/.test(idNumber))
       return res.status(400).json({ message: "ID number must contain numbers only" });
-    }
 
     if (email && email !== guest.email) {
-      const exists = await Guest.findOne({ email });
+      const exists = await Guest.findOne({ email, hotel: guest.hotel });
       if (exists)
         return res.status(400).json({ message: "Email already in use by another guest" });
     }
 
-    const updated = await Guest.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const updated = await Guest.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    ).populate("hotel", "name city");
+
     res.json(updated);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -122,6 +135,10 @@ export const deleteGuest = async (req, res) => {
   try {
     const guest = await Guest.findById(req.params.id);
     if (!guest) return res.status(404).json({ message: "Guest not found" });
+
+    if (req.user.role !== "SuperAdmin" &&
+      guest.hotel.toString() !== req.user.hotel.toString())
+      return res.status(403).json({ message: "Access denied" });
 
     const activeBooking = await Booking.findOne({
       guest: req.params.id,
@@ -141,6 +158,10 @@ export const getGuestBookingHistory = async (req, res) => {
   try {
     const guest = await Guest.findById(req.params.id);
     if (!guest) return res.status(404).json({ message: "Guest not found" });
+
+    if (req.user.role !== "SuperAdmin" &&
+      guest.hotel.toString() !== req.user.hotel.toString())
+      return res.status(403).json({ message: "Access denied" });
 
     const bookings = await Booking.find({ guest: req.params.id })
       .populate("room", "roomNumber roomType pricePerNight")
