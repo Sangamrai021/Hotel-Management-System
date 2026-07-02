@@ -9,6 +9,10 @@ export const generateInvoice = async (req, res) => {
 
     if (!booking) return res.status(404).json({ message: "Booking not found" });
 
+    if (req.user.role !== "SuperAdmin" &&
+      booking.hotel.toString() !== req.user.hotel.toString())
+      return res.status(403).json({ message: "Access denied" });
+
     const existing = await Invoice.findOne({ booking: booking._id });
     if (existing)
       return res.status(400).json({
@@ -20,10 +24,10 @@ export const generateInvoice = async (req, res) => {
       return res.status(400).json({ message: "Cannot generate invoice for a cancelled booking" });
 
     const invoice = await Invoice.create({
+      hotel: booking.hotel,
       booking: booking._id,
       guest: booking.guest._id,
       room: booking.room._id,
-      hotel: booking.hotel,
       guestName: booking.guest.name,
       roomNumber: booking.room.roomNumber,
       roomType: booking.room.roomType,
@@ -33,6 +37,7 @@ export const generateInvoice = async (req, res) => {
       pricePerNight: booking.pricePerNight,
       totalAmount: booking.totalAmount,
       invoiceDate: new Date(),
+      paymentStatus: "Pending",
     });
 
     res.status(201).json(invoice);
@@ -43,8 +48,14 @@ export const generateInvoice = async (req, res) => {
 
 export const getInvoiceByBooking = async (req, res) => {
   try {
-    const invoice = await Invoice.findOne({ booking: req.params.bookingId });
+    const invoice = await Invoice.findOne({ booking: req.params.bookingId })
+      .populate("hotel", "name city address phone email");
     if (!invoice) return res.status(404).json({ message: "Invoice not found" });
+
+    if (req.user.role !== "SuperAdmin" &&
+      invoice.hotel._id.toString() !== req.user.hotel.toString())
+      return res.status(403).json({ message: "Access denied" });
+
     res.json(invoice);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -53,11 +64,27 @@ export const getInvoiceByBooking = async (req, res) => {
 
 export const getAllInvoices = async (req, res) => {
   try {
-    const invoices = await Invoice.find()
+    const { paymentStatus, page = 1, limit = 10 } = req.query;
+
+    const hotelId = req.user.role === "SuperAdmin"
+      ? req.query.hotelId
+      : req.user.hotel;
+
+    const filter = {};
+    if (hotelId) filter.hotel = hotelId;
+    if (paymentStatus) filter.paymentStatus = paymentStatus;
+
+    const total = await Invoice.countDocuments(filter);
+    const totalPages = Math.ceil(total / limit);
+    const invoices = await Invoice.find(filter)
       .populate("guest", "name email")
       .populate("room", "roomNumber roomType")
-      .sort({ createdAt: -1 });
-    res.json(invoices);
+      .populate("hotel", "name city")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    res.json({ invoices, total, totalPages, currentPage: Number(page) });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
