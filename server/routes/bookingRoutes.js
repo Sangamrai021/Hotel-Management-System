@@ -7,11 +7,12 @@ import {
   deleteBooking,
   checkRoomAvailability,
 } from "../controllers/bookingController.js";
-import protect from "../middleware/auth.js";
+import { protect, allowRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.use(protect);
+router.use(allowRoles("SuperAdmin", "Manager", "Receptionist"));
 router.get("/check-availability", checkRoomAvailability);
 router.post("/", createBooking);
 router.get("/", getAllBookings);

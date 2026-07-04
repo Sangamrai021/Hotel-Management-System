@@ -1,11 +1,11 @@
 import axios from "axios";
 
-// const API = axios.create({
-//   baseURL: "http://localhost:9000/api",
-// });
 const API = axios.create({
-  baseURL: "https://hotel-management-system-8n2a.onrender.com/api",
+  baseURL: "http://localhost:9000/api",
 });
+// const API = axios.create({
+//   baseURL: "https://hotel-management-system-8n2a.onrender.com/api",
+// });
 
 // Automatically attach token to every request
 API.interceptors.request.use((config) => {
@@ -15,5 +15,19 @@ API.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Handle 401 responses globally
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 export default API;

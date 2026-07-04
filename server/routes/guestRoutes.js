@@ -7,11 +7,12 @@ import {
   deleteGuest,
   getGuestBookingHistory,
 } from "../controllers/guestController.js";
-import protect from "../middleware/auth.js";
+import { protect, allowRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.use(protect);
+router.use(allowRoles("SuperAdmin", "Manager", "Receptionist"));
 router.post("/", createGuest);
 router.get("/", getAllGuests);
 router.get("/:id", getGuestById);
