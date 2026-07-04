@@ -34,17 +34,17 @@ const Login = () => {
         <div style={styles.container}>
             <div style={styles.left}>
                 <div style={styles.leftContent}>
-                    <div style={styles.hotelIcon}>🏨</div>
+                    <div style={styles.hotelIcon}></div>
                     <h1 style={styles.hotelName}>Hotel Management System</h1>
                     <p style={styles.hotelVersion}>Version 2.0</p>
                     <p style={styles.hotelTagline}>
                         Manage your hotel operations efficiently from one place
                     </p>
                     <div style={styles.features}>
-                        <div style={styles.feature}>✅ Role Based Access Control</div>
-                        <div style={styles.feature}>✅ Multi Hotel Support</div>
-                        <div style={styles.feature}>✅ Payment Integration</div>
-                        <div style={styles.feature}>✅ Real Time Dashboard</div>
+                        <div style={styles.feature}> Role Based Access Control</div>
+                        <div style={styles.feature}> Multi Hotel Support</div>
+                        <div style={styles.feature}> Payment Integration</div>
+                        <div style={styles.feature}> Real Time Dashboard</div>
                     </div>
 
                     <div style={styles.demoBox}>
@@ -106,7 +106,7 @@ const Login = () => {
                                     onClick={() => setShowPassword(!showPassword)}
                                     style={styles.eyeBtn}
                                 >
-                                    {showPassword ? "🙈" : "👁️"}
+                                    {showPassword ? " " : " "}
                                 </button>
                             </div>
                         </div>
