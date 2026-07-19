@@ -114,8 +114,9 @@ const AddUser = () => {
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
                                 style={styles.eyeBtn}
+                                aria-label={showPassword ? "Hide password" : "Show password"}
                             >
-                                {showPassword ? "" : ""}
+                                {showPassword ? "Hide" : "Show"}
                             </button>
                         </div>
                     </div>
