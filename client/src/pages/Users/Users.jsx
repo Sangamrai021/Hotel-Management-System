@@ -193,23 +193,25 @@ const Users = () => {
 
                     {/* Pagination */}
                     <div style={styles.pagination}>
-                        <button
-                            onClick={() => fetchUsers(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            style={styles.pageBtn}
-                        >
-                            ← Previous
-                        </button>
-                        <span style={styles.pageInfo}>
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        <button
-                            onClick={() => fetchUsers(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            style={styles.pageBtn}
-                        >
-                            Next →
-                        </button>
+                        <span style={styles.pageInfo}>Showing page {currentPage} of {totalPages}</span>
+                        <div style={styles.paginationControls}>
+                            <button
+                                onClick={() => fetchUsers(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="shared-page-btn"
+                                style={styles.pageBtn}
+                            >
+                                ← Previous
+                            </button>
+                            <button
+                                onClick={() => fetchUsers(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="shared-page-btn"
+                                style={styles.pageBtn}
+                            >
+                                Next →
+                            </button>
+                        </div>
                     </div>
                 </>
             )}
@@ -267,9 +269,10 @@ const styles = {
     toggleBtn: { color: "white", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", marginRight: "6px", fontSize: "12px" },
     deleteBtn: { backgroundColor: "#e63946", color: "white", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontSize: "12px" },
     empty: { textAlign: "center", padding: "60px", color: "#666", backgroundColor: "white", borderRadius: "12px" },
-    pagination: { display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", marginTop: "24px" },
+    pagination: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginTop: "24px" },
+    paginationControls: { display: "flex", alignItems: "center", gap: "12px" },
     pageBtn: { padding: "8px 20px", backgroundColor: "#1a1a2e", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px" },
-    pageInfo: { fontSize: "14px", color: "#333" },
+    pageInfo: { fontSize: "14px", color: "#333", fontWeight: "500" },
     overlay: { position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 },
     modal: { backgroundColor: "white", padding: "32px", borderRadius: "12px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)", width: "100%", maxWidth: "420px", textAlign: "center" },
     modalTitle: { fontSize: "20px", color: "#1a1a2e", marginBottom: "12px" },
