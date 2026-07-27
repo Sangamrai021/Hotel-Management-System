@@ -69,7 +69,7 @@ const Users = () => {
             {/* Header */}
             <div style={styles.header}>
                 <div>
-                    <h2 style={styles.title}>👥 User Management</h2>
+                    <h2 style={styles.title}>User Management</h2>
                     <p style={styles.subtitle}>Manage all staff users across all hotels</p>
                 </div>
                 <button
@@ -149,7 +149,7 @@ const Users = () => {
                                         </td>
                                         <td style={styles.td}>
                                             {user.hotel
-                                                ? `🏨 ${user.hotel.name}`
+                                                ? `${user.hotel.name}`
                                                 : <span style={{ color: "#999" }}>All Hotels</span>
                                             }
                                         </td>

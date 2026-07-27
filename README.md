@@ -188,11 +188,11 @@ npm run dev
 ### 7. Login credentials
 Email:    admin@gmail.com
 Password: admin123
-> ⚠️ These are demo credentials for development only. Change them in production by updating `seed/seedAdmin.js` and re-running `npm run seed`.
+> **Note:** These are demo credentials for development only. Change them in production by updating `seed/seedAdmin.js` and re-running `npm run seed`.
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 | Method | Route | Description |
 |--------|-------|-------------|

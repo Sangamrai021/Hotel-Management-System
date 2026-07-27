@@ -49,7 +49,7 @@ const Hotels = () => {
             {/* Header */}
             <div style={styles.header}>
                 <div>
-                    <h2 style={styles.title}>🏨 Hotel Management</h2>
+                    <h2 style={styles.title}>Hotel Management</h2>
                     <p style={styles.subtitle}>Manage all hotels in the system</p>
                 </div>
                 <button
@@ -94,7 +94,7 @@ const Hotels = () => {
                                 <tr key={hotel._id} style={styles.tr}>
                                     <td style={styles.td}>{index + 1}</td>
                                     <td style={styles.td}>
-                                        <div style={styles.hotelName}>🏨 {hotel.name}</div>
+                                        <div style={styles.hotelName}>{hotel.name}</div>
                                         <div style={styles.hotelAddress}>{hotel.address}</div>
                                     </td>
                                     <td style={styles.td}>{hotel.city}</td>
@@ -150,7 +150,7 @@ const Hotels = () => {
             {deleteModal.show && (
                 <div style={styles.overlay}>
                     <div style={styles.modal}>
-                        <h3 style={styles.modalTitle}>⚠️ Delete Hotel</h3>
+                        <h3 style={styles.modalTitle}>Delete Hotel</h3>
                         <p style={styles.modalText}>
                             Are you sure you want to delete{" "}
                             <strong>{deleteModal.hotel?.name}</strong>?

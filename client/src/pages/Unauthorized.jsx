@@ -18,7 +18,7 @@ const Unauthorized = () => {
     return (
         <div style={styles.container}>
             <div style={styles.card}>
-                <div style={styles.icon}>🔒</div>
+                <div style={styles.icon}></div>
                 <h2 style={styles.title}>Access Denied</h2>
                 <p style={styles.message}>
                     You do not have permission to view this page.

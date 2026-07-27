@@ -54,7 +54,7 @@ const EditHotel = () => {
     return (
         <div style={styles.container}>
             <div style={styles.card}>
-                <h2 style={styles.title}>🏨 Edit Hotel</h2>
+                <h2 style={styles.title}>Edit Hotel</h2>
                 <p style={styles.subtitle}>Update hotel details</p>
 
                 {error && <div style={styles.error}>{error}</div>}

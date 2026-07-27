@@ -208,7 +208,7 @@ const Payments = () => {
                                                     }}
                                                     style={styles.collectBtn}
                                                 >
-                                                    💰 Collect
+                                                    Collect
                                                 </button>
                                             ) : (
                                                 <button
@@ -276,7 +276,7 @@ const Payments = () => {
                         {paymentSuccess ? (
                             // Success State
                             <div style={styles.successContainer}>
-                                <div style={styles.successIcon}>✅</div>
+                                <div style={styles.successIcon}></div>
                                 <h3 style={styles.successTitle}>Payment Successful!</h3>
                                 <p style={styles.successAmount}>
                                     Rs. {paymentModal.invoice?.totalAmount?.toLocaleString()} collected
@@ -302,7 +302,7 @@ const Payments = () => {
                         ) : (
                             // Payment Form
                             <>
-                                <h3 style={styles.modalTitle}>💰 Collect Payment</h3>
+                                <h3 style={styles.modalTitle}>Collect Payment</h3>
 
                                 <div style={styles.modalInfo}>
                                     <div style={styles.modalInfoRow}>

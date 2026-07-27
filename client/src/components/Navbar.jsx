@@ -99,7 +99,7 @@ const Navbar = () => {
             <nav style={styles.nav}>
                 {/* Brand */}
                 <div style={styles.brand}>
-                    🏨 {user?.hotel?.name || "Hotel Management"}
+                    {user?.hotel?.name || "Hotel Management"}
                 </div>
 
                 {/* Navigation Links */}
@@ -239,7 +239,7 @@ const Navbar = () => {
                                         </div>
                                         {user?.hotel && (
                                             <div style={{ fontSize: "12px", color: "#4361ee", marginTop: "4px" }}>
-                                                🏨 {user.hotel.name}
+                                                {user.hotel.name}
                                             </div>
                                         )}
                                     </div>
@@ -262,7 +262,7 @@ const Navbar = () => {
                                             color: "#333",
                                         }}
                                     >
-                                        👤 My Profile
+                                        My Profile
                                     </button>
 
                                     <div style={{ height: "1px", backgroundColor: "#f0f0f0" }} />
@@ -283,7 +283,7 @@ const Navbar = () => {
                                             color: "#e63946",
                                         }}
                                     >
-                                        🚪 Logout
+                                        Logout
                                     </button>
                                 </div>
                             </>
