@@ -393,3 +393,70 @@ body {
   opacity: 0.55;
   cursor: not-allowed;
 }
+
+/* ============ LOGIN PAGE ============ */
+
+.login-input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border-radius: 8px;
+  border: 1.5px solid #e0e0e0;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
+  background-color: #fafafa;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.login-input:focus {
+  border-color: #d4a853;
+  box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.12);
+  background-color: white;
+}
+
+.login-input::placeholder {
+  color: #bbb;
+  font-size: 13px;
+}
+
+.login-input:focus::placeholder {
+  color: #ccc;
+}
+
+.login-input-wrap:focus-within svg {
+  color: #d4a853;
+}
+
+.login-input-wrap:focus-within svg rect,
+.login-input-wrap:focus-within svg path,
+.login-input-wrap:focus-within svg circle {
+  stroke: #d4a853;
+}
+
+.login-eye-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.login-submit-btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background-color 0.2s ease;
+}
+
+.login-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 26, 46, 0.3);
+  filter: brightness(1.08);
+}
+
+.login-submit-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+}
+
+.login-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
