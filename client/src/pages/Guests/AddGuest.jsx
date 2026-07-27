@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import API from "../../api/axios";
 
 const AddGuest = () => {
+    const { user } = useAuth();
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -13,7 +15,17 @@ const AddGuest = () => {
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [hotels, setHotels] = useState([]);
+    const [selectedHotel, setSelectedHotel] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user?.role === "SuperAdmin") {
+            API.get("/hotels", { params: { limit: 100 } })
+                .then((res) => setHotels(res.data.hotels || res.data))
+                .catch(() => {});
+        }
+    }, [user]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,7 +36,9 @@ const AddGuest = () => {
         setError("");
         setLoading(true);
         try {
-            await API.post("/guests", form);
+            const payload = { ...form };
+            if (user?.role === "SuperAdmin") payload.hotelId = selectedHotel;
+            await API.post("/guests", payload);
             navigate("/guests");
         } catch (err) {
             setError(err.response?.data?.message || "Failed to add guest");
@@ -39,6 +53,23 @@ const AddGuest = () => {
                 <h2 style={styles.title}>Add Guest</h2>
 
                 {error && <div style={styles.error}>{error}</div>}
+
+                {user?.role === "SuperAdmin" && (
+                    <div style={styles.field}>
+                        <label style={styles.label}>Hotel *</label>
+                        <select
+                            value={selectedHotel}
+                            onChange={(e) => setSelectedHotel(e.target.value)}
+                            style={styles.input}
+                            required
+                        >
+                            <option value="">Select Hotel</option>
+                            {hotels.map((h) => (
+                                <option key={h._id} value={h._id}>{h.name} — {h.city}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div style={styles.field}>

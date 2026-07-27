@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import API from "../../api/axios";
 
 const EditRoom = () => {
+    const { user } = useAuth();
     const [form, setForm] = useState({
         roomNumber: "",
         roomType: "Standard",
@@ -10,6 +12,7 @@ const EditRoom = () => {
         description: "",
         status: "Available",
     });
+    const [hotelInfo, setHotelInfo] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -26,6 +29,7 @@ const EditRoom = () => {
                     description: res.data.description,
                     status: res.data.status,
                 });
+                setHotelInfo(res.data.hotel);
             } catch (error) {
                 console.log(error);
                 setError("Failed to load room");
@@ -58,6 +62,18 @@ const EditRoom = () => {
                 <h2 style={styles.title}>Edit Room</h2>
 
                 {error && <div style={styles.error}>{error}</div>}
+
+                {user?.role === "SuperAdmin" && hotelInfo && (
+                    <div style={{ ...styles.field, display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", backgroundColor: "#f8f4ff", borderRadius: "8px", border: "1px solid #e8dfff" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6d6875" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="4" y="2" width="16" height="20" rx="1" />
+                            <path d="M9 2v4h6V2M9 10h2v2H9zm4 0h2v2h-2zM9 14h2v2H9zm4 0h2v2h-2z" />
+                        </svg>
+                        <span style={{ fontSize: "13px", color: "#6d6875" }}>
+                            Hotel: <strong>{hotelInfo.name}</strong> — {hotelInfo.city}
+                        </span>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div style={styles.field}>

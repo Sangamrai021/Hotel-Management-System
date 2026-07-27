@@ -4,10 +4,11 @@ export const createRoom = async (req, res) => {
   try {
     const { roomNumber, roomType, pricePerNight, description } = req.body;
 
-    // Get hotel from logged in user
-    const hotelId = req.user.hotel;
+    const hotelId = req.user.role === "SuperAdmin"
+      ? req.body.hotelId
+      : req.user.hotel;
     if (!hotelId)
-      return res.status(400).json({ message: "No hotel assigned to your account" });
+      return res.status(400).json({ message: req.user.role === "SuperAdmin" ? "hotelId is required" : "No hotel assigned to your account" });
 
     // Validate room number format
     if (!/^(?=.*[0-9])[a-zA-Z0-9-]+$/.test(roomNumber))

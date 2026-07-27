@@ -17,23 +17,26 @@ export const createBooking = async (req, res) => {
   try {
     const { guest, room, checkIn, checkOut } = req.body;
 
-    const hotelId = req.user.hotel;
-    if (!hotelId)
-      return res.status(400).json({ message: "No hotel assigned to your account" });
-
     const guestDoc = await Guest.findById(guest);
     if (!guestDoc) return res.status(404).json({ message: "Guest not found" });
-
-    // Guest must belong to same hotel
-    if (guestDoc.hotel.toString() !== hotelId.toString())
-      return res.status(400).json({ message: "Guest does not belong to your hotel" });
 
     const roomDoc = await Room.findById(room);
     if (!roomDoc) return res.status(404).json({ message: "Room not found" });
 
-    // Room must belong to same hotel
-    if (roomDoc.hotel.toString() !== hotelId.toString())
-      return res.status(400).json({ message: "Room does not belong to your hotel" });
+    let hotelId;
+    if (req.user.role === "SuperAdmin") {
+      if (guestDoc.hotel.toString() !== roomDoc.hotel.toString())
+        return res.status(400).json({ message: "Guest and room must belong to the same hotel" });
+      hotelId = roomDoc.hotel;
+    } else {
+      hotelId = req.user.hotel;
+      if (!hotelId)
+        return res.status(400).json({ message: "No hotel assigned to your account" });
+      if (guestDoc.hotel.toString() !== hotelId.toString())
+        return res.status(400).json({ message: "Guest does not belong to your hotel" });
+      if (roomDoc.hotel.toString() !== hotelId.toString())
+        return res.status(400).json({ message: "Room does not belong to your hotel" });
+    }
 
     const checkInDate = new Date(checkIn);
     const checkOutDate = new Date(checkOut);

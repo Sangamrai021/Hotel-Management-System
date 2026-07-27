@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import API from "../../api/axios";
 
 const EditGuest = () => {
+    const { user } = useAuth();
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -11,6 +13,7 @@ const EditGuest = () => {
         idProof: "Citizenship",
         idNumber: "",
     });
+    const [hotelInfo, setHotelInfo] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -28,6 +31,7 @@ const EditGuest = () => {
                     idProof: res.data.idProof,
                     idNumber: res.data.idNumber,
                 });
+                setHotelInfo(res.data.hotel);
             } catch (err) {
                 setError("Failed to load guest");
             }
@@ -59,6 +63,18 @@ const EditGuest = () => {
                 <h2 style={styles.title}>Edit Guest</h2>
 
                 {error && <div style={styles.error}>{error}</div>}
+
+                {user?.role === "SuperAdmin" && hotelInfo && (
+                    <div style={{ ...styles.field, display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", backgroundColor: "#f8f4ff", borderRadius: "8px", border: "1px solid #e8dfff" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6d6875" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                        </svg>
+                        <span style={{ fontSize: "13px", color: "#6d6875" }}>
+                            Hotel: <strong>{hotelInfo.name}</strong> — {hotelInfo.city}
+                        </span>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div style={styles.field}>

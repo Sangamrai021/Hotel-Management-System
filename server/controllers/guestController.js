@@ -5,9 +5,11 @@ export const createGuest = async (req, res) => {
   try {
     const { name, email, phone, address, idProof, idNumber } = req.body;
 
-    const hotelId = req.user.hotel;
+    const hotelId = req.user.role === "SuperAdmin"
+      ? req.body.hotelId
+      : req.user.hotel;
     if (!hotelId)
-      return res.status(400).json({ message: "No hotel assigned to your account" });
+      return res.status(400).json({ message: req.user.role === "SuperAdmin" ? "hotelId is required" : "No hotel assigned to your account" });
 
     if (!/^[a-zA-Z\s]+$/.test(name))
       return res.status(400).json({ message: "Name can only contain letters and spaces" });
