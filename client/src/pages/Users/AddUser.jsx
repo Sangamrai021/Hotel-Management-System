@@ -76,6 +76,7 @@ const AddUser = () => {
                             name="name"
                             value={form.name}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             placeholder="e.g. Ram Sharma"
                             pattern="^[a-zA-Z\s]+$"
@@ -91,6 +92,7 @@ const AddUser = () => {
                             type="email"
                             value={form.email}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             placeholder="e.g. ram@hotel.com"
                             required
@@ -105,6 +107,7 @@ const AddUser = () => {
                                 type={showPassword ? "text" : "password"}
                                 value={form.password}
                                 onChange={handleChange}
+                                className="input"
                                 style={{ ...styles.input, paddingRight: "44px" }}
                                 placeholder="Minimum 8 characters"
                                 minLength={8}
@@ -127,6 +130,7 @@ const AddUser = () => {
                             name="phone"
                             value={form.phone}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             placeholder="e.g. 9800000000"
                         />
@@ -138,6 +142,7 @@ const AddUser = () => {
                             name="role"
                             value={form.role}
                             onChange={handleChange}
+                            className="select"
                             style={styles.input}
                         >
                             <option value="Manager">Manager</option>
@@ -166,6 +171,7 @@ const AddUser = () => {
                                 name="hotel"
                                 value={form.hotel}
                                 onChange={handleChange}
+                                className="select"
                                 style={styles.input}
                                 required
                             >
@@ -189,12 +195,14 @@ const AddUser = () => {
                         <button
                             type="button"
                             onClick={() => navigate("/users")}
+                            className="btn btn-cancel"
                             style={styles.cancelBtn}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
+                            className="btn btn-primary"
                             style={styles.submitBtn}
                             disabled={loading}
                         >

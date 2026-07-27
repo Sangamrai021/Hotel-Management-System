@@ -28,6 +28,7 @@ const Unauthorized = () => {
                 </p>
                 <button
                     onClick={() => navigate(getDashboardPath())}
+                    className="btn btn-primary btn-lg"
                     style={styles.button}
                 >
                     Go to Dashboard

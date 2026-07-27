@@ -54,6 +54,7 @@ const Hotels = () => {
                 </div>
                 <button
                     onClick={() => navigate("/hotels/add")}
+                    className="btn btn-primary btn-lg"
                     style={styles.addButton}
                 >
                     + Add New Hotel
@@ -67,6 +68,7 @@ const Hotels = () => {
                     placeholder="Search by hotel name or city..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
+                    className="input"
                     style={styles.input}
                 />
             </div>
@@ -76,7 +78,7 @@ const Hotels = () => {
                 <div style={styles.empty}>No hotels found.</div>
             ) : (
                 <>
-                    <table style={styles.table}>
+                    <table className="table-hover" style={styles.table}>
                         <thead>
                             <tr style={styles.thead}>
                                 <th style={styles.th}>#</th>
@@ -105,12 +107,14 @@ const Hotels = () => {
                                     <td style={styles.td}>
                                         <button
                                             onClick={() => navigate(`/hotels/edit/${hotel._id}`)}
+                                            className="btn btn-edit btn-sm"
                                             style={styles.editBtn}
                                         >
                                             Edit
                                         </button>
                                         <button
                                             onClick={() => setDeleteModal({ show: true, hotel })}
+                                            className="btn btn-danger btn-sm"
                                             style={styles.deleteBtn}
                                         >
                                             Delete
@@ -128,7 +132,7 @@ const Hotels = () => {
                             <button
                                 onClick={() => fetchHotels(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="shared-page-btn"
+                                className="btn btn-primary"
                                 style={styles.pageBtn}
                             >
                                 ← Previous
@@ -136,7 +140,7 @@ const Hotels = () => {
                             <button
                                 onClick={() => fetchHotels(currentPage + 1)}
                                 disabled={currentPage === totalPages}
-                                className="shared-page-btn"
+                                className="btn btn-primary"
                                 style={styles.pageBtn}
                             >
                                 Next →
@@ -148,7 +152,7 @@ const Hotels = () => {
 
             {/* Delete Modal */}
             {deleteModal.show && (
-                <div style={styles.overlay}>
+                <div className="overlay" style={styles.overlay}>
                     <div style={styles.modal}>
                         <h3 style={styles.modalTitle}>Delete Hotel</h3>
                         <p style={styles.modalText}>
@@ -161,11 +165,12 @@ const Hotels = () => {
                         <div style={styles.modalButtons}>
                             <button
                                 onClick={() => setDeleteModal({ show: false, hotel: null })}
+                                className="btn btn-cancel"
                                 style={styles.cancelBtn}
                             >
                                 Cancel
                             </button>
-                            <button onClick={handleDelete} style={styles.confirmBtn}>
+                            <button onClick={handleDelete} className="btn btn-danger" style={styles.confirmBtn}>
                                 Delete
                             </button>
                         </div>

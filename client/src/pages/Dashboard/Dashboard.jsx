@@ -74,6 +74,7 @@ const Dashboard = () => {
                 {["SuperAdmin", "Manager", "Receptionist"].includes(user?.role) && (
                     <button
                         onClick={() => navigate("/bookings/add")}
+                        className="btn btn-primary btn-lg"
                         style={{ ...styles.actionBtn, backgroundColor: "#1a1a2e" }}
                     >
                         New Booking
@@ -82,6 +83,7 @@ const Dashboard = () => {
                 {["SuperAdmin", "Manager", "Receptionist"].includes(user?.role) && (
                     <button
                         onClick={() => navigate("/bookings")}
+                        className="btn btn-success btn-lg"
                         style={{ ...styles.actionBtn, backgroundColor: "#2a9d8f" }}
                     >
                         Check In
@@ -90,6 +92,7 @@ const Dashboard = () => {
                 {["SuperAdmin", "Manager", "Receptionist"].includes(user?.role) && (
                     <button
                         onClick={() => navigate("/bookings")}
+                        className="btn btn-warning btn-lg"
                         style={{ ...styles.actionBtn, backgroundColor: "#e9c46a", color: "#333" }}
                     >
                         Check Out
@@ -98,6 +101,7 @@ const Dashboard = () => {
                 {["SuperAdmin", "Manager", "Receptionist"].includes(user?.role) && (
                     <button
                         onClick={() => navigate("/payments")}
+                        className="btn btn-edit btn-lg"
                         style={{ ...styles.actionBtn, backgroundColor: "#4361ee" }}
                     >
                         Collect Payment
@@ -147,6 +151,7 @@ const Dashboard = () => {
                 {getCards().map((card, index) => (
                     <div
                         key={index}
+                        className="card"
                         style={{
                             ...styles.card,
                             borderTop: `4px solid ${card.color}`,
@@ -170,12 +175,14 @@ const Dashboard = () => {
                     You have full system access across all hotels.
                     <button
                         onClick={() => navigate("/hotels")}
+                        className="btn btn-primary btn-sm"
                         style={styles.noticeBtn}
                     >
                         Manage Hotels →
                     </button>
                     <button
                         onClick={() => navigate("/users")}
+                        className="btn btn-primary btn-sm"
                         style={styles.noticeBtn}
                     >
                         Manage Users →

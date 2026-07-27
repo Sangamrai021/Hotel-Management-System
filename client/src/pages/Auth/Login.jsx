@@ -84,7 +84,8 @@ const Login = () => {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                style={styles.input}
+                                className="input"
+                            style={styles.input}
                                 placeholder="your@email.com"
                                 required
                             />
@@ -97,6 +98,7 @@ const Login = () => {
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    className="input"
                                     style={{ ...styles.input, paddingRight: "44px" }}
                                     placeholder="••••••••"
                                     required
@@ -104,6 +106,7 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
+                                    className="btn-ghost"
                                     style={styles.eyeBtn}
                                 >
                                     {showPassword ? " " : " "}
@@ -113,6 +116,7 @@ const Login = () => {
 
                         <button
                             type="submit"
+                            className="btn btn-primary btn-xl"
                             style={styles.button}
                             disabled={loading}
                         >

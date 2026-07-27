@@ -53,7 +53,7 @@ const EditHotel = () => {
 
     return (
         <div style={styles.container}>
-            <div style={styles.card}>
+            <div className="card-static" style={styles.card}>
                 <h2 style={styles.title}>Edit Hotel</h2>
                 <p style={styles.subtitle}>Update hotel details</p>
 
@@ -66,6 +66,7 @@ const EditHotel = () => {
                             name="name"
                             value={form.name}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             required
                         />
@@ -77,6 +78,7 @@ const EditHotel = () => {
                             name="address"
                             value={form.address}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             required
                         />
@@ -88,6 +90,7 @@ const EditHotel = () => {
                             name="city"
                             value={form.city}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             required
                         />
@@ -99,6 +102,7 @@ const EditHotel = () => {
                             name="phone"
                             value={form.phone}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             pattern="^[0-9]{10}$"
                             title="Phone must be exactly 10 digits"
@@ -113,6 +117,7 @@ const EditHotel = () => {
                             type="email"
                             value={form.email}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             required
                         />
@@ -122,12 +127,14 @@ const EditHotel = () => {
                         <button
                             type="button"
                             onClick={() => navigate("/hotels")}
+                            className="btn btn-cancel"
                             style={styles.cancelBtn}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
+                            className="btn btn-primary"
                             style={styles.submitBtn}
                             disabled={loading}
                         >

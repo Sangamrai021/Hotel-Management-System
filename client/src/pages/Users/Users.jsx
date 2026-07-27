@@ -74,6 +74,7 @@ const Users = () => {
                 </div>
                 <button
                     onClick={() => navigate("/users/add")}
+                    className="btn btn-primary btn-lg"
                     style={styles.addButton}
                 >
                     + Add New User
@@ -87,11 +88,13 @@ const Users = () => {
                     placeholder="Search by name or email..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
+                    className="input"
                     style={styles.input}
                 />
                 <select
                     value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
+                    className="select"
                     style={styles.select}
                 >
                     <option value="">All Roles</option>
@@ -107,7 +110,7 @@ const Users = () => {
                 <div style={styles.empty}>No users found.</div>
             ) : (
                 <>
-                    <table style={styles.table}>
+                    <table className="table-hover" style={styles.table}>
                         <thead>
                             <tr style={styles.thead}>
                                 <th style={styles.th}>#</th>
@@ -139,13 +142,13 @@ const Users = () => {
                                             </div>
                                         </td>
                                         <td style={styles.td}>
-                                            <span style={{
-                                                ...styles.badge,
-                                                backgroundColor: bg,
-                                                color,
-                                            }}>
-                                                {user.role}
-                                            </span>
+                                                <span className="badge" style={{
+                                                    ...styles.badge,
+                                                    backgroundColor: bg,
+                                                    color,
+                                                }}>
+                                                    {user.role}
+                                                </span>
                                         </td>
                                         <td style={styles.td}>
                                             {user.hotel
@@ -154,7 +157,7 @@ const Users = () => {
                                             }
                                         </td>
                                         <td style={styles.td}>
-                                            <span style={{
+                                            <span className="badge" style={{
                                                 ...styles.badge,
                                                 backgroundColor: user.isActive ? "#d4edda" : "#f8d7da",
                                                 color: user.isActive ? "#155724" : "#721c24",
@@ -165,12 +168,14 @@ const Users = () => {
                                         <td style={styles.td}>
                                             <button
                                                 onClick={() => navigate(`/users/edit/${user._id}`)}
+                                                className="btn btn-edit btn-sm"
                                                 style={styles.editBtn}
                                             >
                                                 Edit
                                             </button>
                                             <button
                                                 onClick={() => handleToggleStatus(user._id, user.isActive)}
+                                                className="btn btn-sm"
                                                 style={{
                                                     ...styles.toggleBtn,
                                                     backgroundColor: user.isActive ? "#f4a261" : "#2a9d8f",
@@ -180,6 +185,7 @@ const Users = () => {
                                             </button>
                                             <button
                                                 onClick={() => setDeleteModal({ show: true, user })}
+                                                className="btn btn-danger btn-sm"
                                                 style={styles.deleteBtn}
                                             >
                                                 Delete
@@ -198,19 +204,19 @@ const Users = () => {
                             <button
                                 onClick={() => fetchUsers(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="shared-page-btn"
-                                style={styles.pageBtn}
-                            >
-                                ← Previous
-                            </button>
-                            <button
-                                onClick={() => fetchUsers(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className="shared-page-btn"
-                                style={styles.pageBtn}
-                            >
-                                Next →
-                            </button>
+                                                className="btn btn-primary"
+                                                style={styles.pageBtn}
+                                            >
+                                                ← Previous
+                                            </button>
+                                            <button
+                                                onClick={() => fetchUsers(currentPage + 1)}
+                                                disabled={currentPage === totalPages}
+                                                className="btn btn-primary"
+                                                style={styles.pageBtn}
+                                            >
+                                                Next →
+                                            </button>
                         </div>
                     </div>
                 </>
@@ -218,7 +224,7 @@ const Users = () => {
 
             {/* Delete Modal */}
             {deleteModal.show && (
-                <div style={styles.overlay}>
+                <div className="overlay" style={styles.overlay}>
                     <div style={styles.modal}>
                         <h3 style={styles.modalTitle}>Delete User</h3>
                         <p style={styles.modalText}>
@@ -231,11 +237,12 @@ const Users = () => {
                         <div style={styles.modalButtons}>
                             <button
                                 onClick={() => setDeleteModal({ show: false, user: null })}
-                                style={styles.cancelBtn}
-                            >
-                                Cancel
-                            </button>
-                            <button onClick={handleDelete} style={styles.confirmBtn}>
+                                            className="btn btn-cancel"
+                                            style={styles.cancelBtn}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button onClick={handleDelete} className="btn btn-danger" style={styles.confirmBtn}>
                                 Delete
                             </button>
                         </div>

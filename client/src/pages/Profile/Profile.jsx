@@ -99,7 +99,7 @@ const Profile = () => {
             <div style={styles.wrapper}>
 
                 {/* Left — Profile Card */}
-                <div style={styles.profileCard}>
+                    <div className="card-static" style={styles.profileCard}>
                     {/* Avatar */}
                     <div style={{
                         ...styles.avatar,
@@ -135,11 +135,12 @@ const Profile = () => {
                 </div>
 
                 {/* Right — Tabs */}
-                <div style={styles.rightPanel}>
+                    <div className="card-static" style={styles.rightPanel}>
                     {/* Tabs */}
                     <div style={styles.tabs}>
                         <button
                             onClick={() => setActiveTab("profile")}
+                            className="tab-btn"
                             style={{
                                 ...styles.tab,
                                 borderBottom: activeTab === "profile"
@@ -153,6 +154,7 @@ const Profile = () => {
                         </button>
                         <button
                             onClick={() => setActiveTab("password")}
+                            className="tab-btn"
                             style={{
                                 ...styles.tab,
                                 borderBottom: activeTab === "password"
@@ -182,8 +184,9 @@ const Profile = () => {
                                     <input
                                         value={form.name}
                                         onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                        style={styles.input}
-                                        pattern="^[a-zA-Z\s]+$"
+                                    className="input"
+                                    style={styles.input}
+                                    pattern="^[a-zA-Z\s]+$"
                                         title="Name can only contain letters and spaces"
                                         required
                                     />
@@ -193,6 +196,7 @@ const Profile = () => {
                                     <label style={styles.label}>Email Address</label>
                                     <input
                                         value={user?.email}
+                                        className="input"
                                         style={{ ...styles.input, ...styles.readOnly }}
                                         disabled
                                     />
@@ -204,6 +208,7 @@ const Profile = () => {
                                     <input
                                         value={form.phone}
                                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                                        className="input"
                                         style={styles.input}
                                         placeholder="e.g. 9800000000"
                                     />
@@ -213,6 +218,7 @@ const Profile = () => {
                                     <label style={styles.label}>Assigned Hotel</label>
                                     <input
                                         value={user?.hotel?.name || "All Hotels (Super Admin)"}
+                                        className="input"
                                         style={{ ...styles.input, ...styles.readOnly }}
                                         disabled
                                     />
@@ -223,6 +229,7 @@ const Profile = () => {
                                     <label style={styles.label}>Role</label>
                                     <input
                                         value={user?.role}
+                                        className="input"
                                         style={{ ...styles.input, ...styles.readOnly }}
                                         disabled
                                     />
@@ -231,6 +238,7 @@ const Profile = () => {
 
                                 <button
                                     type="submit"
+                                    className="btn btn-primary btn-full"
                                     style={styles.submitBtn}
                                     disabled={loading}
                                 >
@@ -261,6 +269,7 @@ const Profile = () => {
                                                 ...passwordForm,
                                                 currentPassword: e.target.value,
                                             })}
+                                            className="input"
                                             style={{ ...styles.input, paddingRight: "44px" }}
                                             placeholder="Enter current password"
                                             required
@@ -268,6 +277,7 @@ const Profile = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowCurrentPass(!showCurrentPass)}
+                                            className="btn-ghost"
                                             style={styles.eyeBtn}
                                         >
                                             {showCurrentPass ? "Hide" : "Show"}
@@ -285,6 +295,7 @@ const Profile = () => {
                                                 ...passwordForm,
                                                 newPassword: e.target.value,
                                             })}
+                                            className="input"
                                             style={{ ...styles.input, paddingRight: "44px" }}
                                             placeholder="Minimum 8 characters"
                                             required
@@ -292,6 +303,7 @@ const Profile = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowNewPass(!showNewPass)}
+                                            className="btn-ghost"
                                             style={styles.eyeBtn}
                                         >
                                             {showNewPass ? "Hide" : "Show"}
@@ -341,6 +353,7 @@ const Profile = () => {
                                                 ...passwordForm,
                                                 confirmPassword: e.target.value,
                                             })}
+                                            className="input"
                                             style={{ ...styles.input, paddingRight: "44px" }}
                                             placeholder="Repeat new password"
                                             required
@@ -348,6 +361,7 @@ const Profile = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowConfirmPass(!showConfirmPass)}
+                                            className="btn-ghost"
                                             style={styles.eyeBtn}
                                         >
                                             {showConfirmPass ? "Hide" : "Show"}
@@ -370,6 +384,7 @@ const Profile = () => {
 
                                 <button
                                     type="submit"
+                                    className="btn btn-primary btn-full"
                                     style={styles.submitBtn}
                                     disabled={loading}
                                 >

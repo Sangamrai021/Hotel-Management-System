@@ -146,7 +146,7 @@ const Payments = () => {
                 </div>
             ) : (
                 <>
-                    <table style={styles.table}>
+                    <table className="table-hover" style={styles.table}>
                         <thead>
                             <tr style={styles.thead}>
                                 <th style={styles.th}>#</th>
@@ -206,13 +206,15 @@ const Payments = () => {
                                                         setPaymentForm({ method: "Cash", transactionId: "" });
                                                         setPaymentSuccess(null);
                                                     }}
-                                                    style={styles.collectBtn}
+                                                                                    className="btn btn-primary btn-sm"
+                    style={styles.collectBtn}
                                                 >
                                                     Collect
                                                 </button>
                                             ) : (
                                                 <button
                                                     onClick={() => navigate(`/invoices/${invoice.booking}`)}
+                                                    className="btn btn-edit btn-sm"
                                                     style={styles.viewBtn}
                                                 >
                                                     View
@@ -226,10 +228,11 @@ const Payments = () => {
                     </table>
 
                     {/* Pagination */}
-                    <div style={styles.pagination}>
+                    <div                     style={styles.pagination}>
                         <button
                             onClick={() => fetchData(currentPage - 1)}
                             disabled={currentPage === 1}
+                            className="btn btn-primary"
                             style={styles.pageBtn}
                         >
                             ← Previous
@@ -240,6 +243,7 @@ const Payments = () => {
                         <button
                             onClick={() => fetchData(currentPage + 1)}
                             disabled={currentPage === totalPages}
+                            className="btn btn-primary"
                             style={styles.pageBtn}
                         >
                             Next →
@@ -294,10 +298,11 @@ const Payments = () => {
                                         setPaymentModal({ show: false, invoice: null });
                                         setPaymentSuccess(null);
                                     }}
-                                    style={styles.closeBtn}
-                                >
-                                    Close
-                                </button>
+                                className="btn btn-primary"
+                                style={styles.closeBtn}
+                            >
+                                Close
+                            </button>
                             </div>
                         ) : (
                             // Payment Form
@@ -375,17 +380,19 @@ const Payments = () => {
                                 <div style={styles.modalButtons}>
                                     <button
                                         onClick={() => setPaymentModal({ show: false, invoice: null })}
-                                        style={styles.cancelBtn}
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleCollectPayment}
-                                        style={styles.confirmBtn}
-                                        disabled={paymentLoading}
-                                    >
-                                        {paymentLoading ? "Processing..." : "Confirm Payment"}
-                                    </button>
+                                className="btn btn-cancel"
+                                style={styles.cancelBtn}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleCollectPayment}
+                                className="btn btn-success"
+                                style={styles.confirmBtn}
+                                disabled={paymentLoading}
+                            >
+                                {paymentLoading ? "Processing..." : "Confirm Payment"}
+                            </button>
                                 </div>
                             </>
                         )}

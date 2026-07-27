@@ -34,7 +34,7 @@ const AddHotel = () => {
 
     return (
         <div style={styles.container}>
-            <div style={styles.card}>
+                <div className="card-static" style={styles.card}>
                 <h2 style={styles.title}>Add New Hotel</h2>
                 <p style={styles.subtitle}>Fill in the details to add a new hotel</p>
 
@@ -47,6 +47,7 @@ const AddHotel = () => {
                             name="name"
                             value={form.name}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             placeholder="e.g. Hotel Himalaya"
                             required
@@ -59,6 +60,7 @@ const AddHotel = () => {
                             name="address"
                             value={form.address}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             placeholder="e.g. Thamel, Kathmandu"
                             required
@@ -71,6 +73,7 @@ const AddHotel = () => {
                             name="city"
                             value={form.city}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             placeholder="e.g. Kathmandu"
                             required
@@ -83,6 +86,7 @@ const AddHotel = () => {
                             name="phone"
                             value={form.phone}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             placeholder="e.g. 9800000000"
                             pattern="^[0-9]{10}$"
@@ -98,6 +102,7 @@ const AddHotel = () => {
                             type="email"
                             value={form.email}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             placeholder="e.g. info@hotel.com"
                             required
@@ -108,12 +113,14 @@ const AddHotel = () => {
                         <button
                             type="button"
                             onClick={() => navigate("/hotels")}
+                            className="btn btn-cancel"
                             style={styles.cancelBtn}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
+                            className="btn btn-primary"
                             style={styles.submitBtn}
                             disabled={loading}
                         >

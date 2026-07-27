@@ -97,6 +97,7 @@ const EditUser = () => {
                             name="name"
                             value={form.name}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             pattern="^[a-zA-Z\s]+$"
                             title="Name can only contain letters and spaces"
@@ -111,6 +112,7 @@ const EditUser = () => {
                             type="email"
                             value={form.email}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             required
                         />
@@ -127,6 +129,7 @@ const EditUser = () => {
                                 type={showPassword ? "text" : "password"}
                                 value={form.password}
                                 onChange={handleChange}
+                                className="input"
                                 style={{ ...styles.input, paddingRight: "44px" }}
                                 placeholder="Leave blank to keep current password"
                                 minLength={form.password ? 8 : 0}
@@ -148,6 +151,7 @@ const EditUser = () => {
                             name="phone"
                             value={form.phone}
                             onChange={handleChange}
+                            className="input"
                             style={styles.input}
                             placeholder="e.g. 9800000000"
                         />
@@ -159,6 +163,7 @@ const EditUser = () => {
                             name="role"
                             value={form.role}
                             onChange={handleChange}
+                            className="select"
                             style={styles.input}
                         >
                             <option value="Manager">Manager</option>
@@ -185,6 +190,7 @@ const EditUser = () => {
                                 name="hotel"
                                 value={form.hotel}
                                 onChange={handleChange}
+                                className="select"
                                 style={styles.input}
                                 required
                             >
@@ -236,12 +242,14 @@ const EditUser = () => {
                         <button
                             type="button"
                             onClick={() => navigate("/users")}
+                            className="btn btn-cancel"
                             style={styles.cancelBtn}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
+                            className="btn btn-primary"
                             style={styles.submitBtn}
                             disabled={loading}
                         >
