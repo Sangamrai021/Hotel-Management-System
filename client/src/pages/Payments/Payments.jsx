@@ -237,18 +237,18 @@ const Payments = () => {
                                                         setPaymentForm({ method: "Cash", transactionId: "" });
                                                         setPaymentSuccess(null);
                                                     }}
-                                                                                    className="btn btn-primary btn-sm"
-                    style={styles.collectBtn}
+                                                    className="btn-icon"
+                                                    title="Collect Payment"
                                                 >
-                                                    Collect
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
                                                 </button>
                                             ) : (
                                                 <button
                                                     onClick={() => navigate(`/invoices/${invoice.booking}`)}
-                                                    className="btn btn-edit btn-sm"
-                                                    style={styles.viewBtn}
+                                                    className="btn-icon"
+                                                    title="View"
                                                 >
-                                                    View
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                                 </button>
                                             )}
                                         </td>
@@ -457,8 +457,6 @@ const styles = {
     invoiceDate: { fontSize: "12px", color: "#666" },
     amount: { fontWeight: "bold", color: "#1a1a2e", fontSize: "15px" },
     badge: { padding: "4px 10px", borderRadius: "20px", fontSize: "12px", fontWeight: "500" },
-    collectBtn: { backgroundColor: "#1a1a2e", color: "white", border: "none", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "13px" },
-    viewBtn: { backgroundColor: "#4361ee", color: "white", border: "none", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "13px" },
     empty: { textAlign: "center", padding: "60px", color: "#666", backgroundColor: "white", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0,0,0,0.06)" },
     pagination: { display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", marginTop: "24px" },
     pageBtn: { padding: "8px 20px", backgroundColor: "#1a1a2e", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px" },

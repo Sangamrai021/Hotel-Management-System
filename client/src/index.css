@@ -138,6 +138,37 @@ body {
   transform: translateY(0) scale(0.98);
 }
 
+.btn-icon {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #666;
+  transition: background-color 0.15s, color 0.15s, transform 0.12s;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.btn-icon:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: #1a1a2e;
+}
+
+.btn-icon:active {
+  transform: scale(0.9);
+}
+
+.btn-icon-danger:hover {
+  background-color: #fce8e8;
+  color: #e63946;
+}
+
 /* ============ CARDS ============ */
 
 .card {

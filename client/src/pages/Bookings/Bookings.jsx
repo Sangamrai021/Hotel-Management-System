@@ -172,24 +172,24 @@ const Bookings = () => {
                                             <td>
                                                 {booking.status === "Booked" && (
                                                     <>
-                                                        <button onClick={() => handleStatusUpdate(booking._id, "CheckedIn")} className="btn btn-success btn-sm">
-                                                            Check In
+                                                        <button onClick={() => handleStatusUpdate(booking._id, "CheckedIn")} className="btn-icon" title="Check In">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
                                                         </button>
-                                                        <button onClick={() => handleStatusUpdate(booking._id, "Cancelled")} className="btn btn-warning btn-sm" style={{ marginLeft: "4px" }}>
-                                                            Cancel
+                                                        <button onClick={() => handleStatusUpdate(booking._id, "Cancelled")} className="btn-icon btn-icon-danger" title="Cancel" style={{ marginLeft: "4px" }}>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                                                         </button>
                                                     </>
                                                 )}
                                                 {booking.status === "CheckedIn" && (
-                                                    <button onClick={() => handleStatusUpdate(booking._id, "CheckedOut")} className="btn btn-warning btn-sm">
-                                                        Check Out
+                                                    <button onClick={() => handleStatusUpdate(booking._id, "CheckedOut")} className="btn-icon" title="Check Out" style={{ marginLeft: "4px" }}>
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                                                     </button>
                                                 )}
-                                                <button onClick={() => handleInvoice(booking._id)} className="btn btn-edit btn-sm" style={{ marginLeft: "4px" }}>
-                                                    Invoice
+                                                <button onClick={() => handleInvoice(booking._id)} className="btn-icon" title="Invoice" style={{ marginLeft: "4px" }}>
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                 </button>
-                                                <button onClick={() => handleDelete(booking._id)} className="btn btn-danger btn-sm" style={{ marginLeft: "4px" }}>
-                                                    Delete
+                                                <button onClick={() => handleDelete(booking._id)} className="btn-icon btn-icon-danger" title="Delete" style={{ marginLeft: "4px" }}>
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                                                 </button>
                                             </td>
                                         </tr>

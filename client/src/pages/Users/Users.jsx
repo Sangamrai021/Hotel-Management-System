@@ -172,13 +172,23 @@ const Users = () => {
                                                 </span>
                                             </td>
                                             <td>
-                                                <button onClick={() => navigate(`/users/edit/${user._id}`)} className="btn btn-edit btn-sm">Edit</button>
+                                                <button onClick={() => navigate(`/users/edit/${user._id}`)} className="btn-icon" title="Edit">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                                </button>
                                                 {user.role !== "SuperAdmin" && (
                                                     <>
-                                                        <button onClick={() => handleToggleStatus(user._id, user.isActive)} className="btn btn-sm" style={{ marginLeft: "4px", backgroundColor: user.isActive ? "#f4a261" : "#2a9d8f", color: "#fff", border: "none" }}>
-                                                            {user.isActive ? "Deactivate" : "Activate"}
+                                                        {user.isActive ? (
+                                                            <button onClick={() => handleToggleStatus(user._id, user.isActive)} className="btn-icon" title="Deactivate" style={{ marginLeft: "4px" }}>
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg>
+                                                            </button>
+                                                        ) : (
+                                                            <button onClick={() => handleToggleStatus(user._id, user.isActive)} className="btn-icon" title="Activate" style={{ marginLeft: "4px" }}>
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16" fill="currentColor"/></svg>
+                                                            </button>
+                                                        )}
+                                                        <button onClick={() => setDeleteModal({ show: true, user })} className="btn-icon btn-icon-danger" title="Delete" style={{ marginLeft: "4px" }}>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                                                         </button>
-                                                        <button onClick={() => setDeleteModal({ show: true, user })} className="btn btn-danger btn-sm" style={{ marginLeft: "4px" }}>Delete</button>
                                                     </>
                                                 )}
                                             </td>
