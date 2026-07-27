@@ -159,18 +159,24 @@ const EditUser = () => {
 
                     <div style={styles.field}>
                         <label style={styles.label}>Role *</label>
-                        <select
-                            name="role"
-                            value={form.role}
-                            onChange={handleChange}
-                            className="select"
-                            style={styles.input}
-                        >
-                            <option value="Manager">Manager</option>
-                            <option value="Receptionist">Receptionist</option>
-                            <option value="Accountant">Accountant</option>
-                            <option value="SuperAdmin">Super Admin</option>
-                        </select>
+                        {form.role === "SuperAdmin" ? (
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 14px", borderRadius: "6px", border: "1px solid #ccc", backgroundColor: "#f5f5f5", fontSize: "15px", color: "#666" }}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                                Super Admin
+                            </div>
+                        ) : (
+                            <select
+                                name="role"
+                                value={form.role}
+                                onChange={handleChange}
+                                className="select"
+                                style={styles.input}
+                            >
+                                <option value="Manager">Manager</option>
+                                <option value="Receptionist">Receptionist</option>
+                                <option value="Accountant">Accountant</option>
+                            </select>
+                        )}
                         <div style={{
                             ...styles.roleHint,
                             borderLeft: `3px solid ${getRoleColor(form.role)}`,
@@ -210,18 +216,11 @@ const EditUser = () => {
                         </div>
                     )}
 
-                    {/* Active Status Toggle */}
+                    {/* Active Status Toggle — locked for SuperAdmin */}
                     <div style={styles.field}>
                         <label style={styles.label}>Account Status</label>
                         <div style={styles.statusToggle}>
-                            <label style={styles.toggleLabel}>
-                                <input
-                                    type="checkbox"
-                                    name="isActive"
-                                    checked={form.isActive}
-                                    onChange={handleChange}
-                                    style={styles.checkbox}
-                                />
+                            {form.role === "SuperAdmin" ? (
                                 <span style={{
                                     ...styles.statusBadge,
                                     backgroundColor: form.isActive ? "#d4edda" : "#f8d7da",
@@ -229,11 +228,30 @@ const EditUser = () => {
                                 }}>
                                     {form.isActive ? "Active" : "Inactive"}
                                 </span>
-                            </label>
+                            ) : (
+                                <label style={styles.toggleLabel}>
+                                    <input
+                                        type="checkbox"
+                                        name="isActive"
+                                        checked={form.isActive}
+                                        onChange={handleChange}
+                                        style={styles.checkbox}
+                                    />
+                                    <span style={{
+                                        ...styles.statusBadge,
+                                        backgroundColor: form.isActive ? "#d4edda" : "#f8d7da",
+                                        color: form.isActive ? "#155724" : "#721c24",
+                                    }}>
+                                        {form.isActive ? "Active" : "Inactive"}
+                                    </span>
+                                </label>
+                            )}
                             <span style={styles.statusHint}>
-                                {form.isActive
-                                    ? "User can log in and access the system"
-                                    : "User cannot log in — account is deactivated"}
+                                {form.role === "SuperAdmin"
+                                    ? "Super Admin accounts cannot be deactivated"
+                                    : form.isActive
+                                        ? "User can log in and access the system"
+                                        : "User cannot log in — account is deactivated"}
                             </span>
                         </div>
                     </div>

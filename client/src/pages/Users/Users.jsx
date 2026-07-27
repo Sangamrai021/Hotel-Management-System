@@ -173,10 +173,14 @@ const Users = () => {
                                             </td>
                                             <td>
                                                 <button onClick={() => navigate(`/users/edit/${user._id}`)} className="btn btn-edit btn-sm">Edit</button>
-                                                <button onClick={() => handleToggleStatus(user._id, user.isActive)} className="btn btn-sm" style={{ marginLeft: "4px", backgroundColor: user.isActive ? "#f4a261" : "#2a9d8f", color: "#fff", border: "none" }}>
-                                                    {user.isActive ? "Deactivate" : "Activate"}
-                                                </button>
-                                                <button onClick={() => setDeleteModal({ show: true, user })} className="btn btn-danger btn-sm" style={{ marginLeft: "4px" }}>Delete</button>
+                                                {user.role !== "SuperAdmin" && (
+                                                    <>
+                                                        <button onClick={() => handleToggleStatus(user._id, user.isActive)} className="btn btn-sm" style={{ marginLeft: "4px", backgroundColor: user.isActive ? "#f4a261" : "#2a9d8f", color: "#fff", border: "none" }}>
+                                                            {user.isActive ? "Deactivate" : "Activate"}
+                                                        </button>
+                                                        <button onClick={() => setDeleteModal({ show: true, user })} className="btn btn-danger btn-sm" style={{ marginLeft: "4px" }}>Delete</button>
+                                                    </>
+                                                )}
                                             </td>
                                         </tr>
                                     );

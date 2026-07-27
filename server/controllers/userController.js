@@ -88,6 +88,12 @@ export const updateUser = async (req, res) => {
 
     const { email, password, role, hotel } = req.body;
 
+    if (user.role === "SuperAdmin" && role && role !== "SuperAdmin")
+      return res.status(403).json({ message: "Cannot change role of a Super Admin" });
+
+    if (user.role === "SuperAdmin" && req.body.isActive === false)
+      return res.status(403).json({ message: "Super Admin accounts cannot be deactivated" });
+
     if (email && email !== user.email) {
       const exists = await User.findOne({ email });
       if (exists)
@@ -124,9 +130,11 @@ export const deleteUser = async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Cannot delete yourself
     if (user._id.toString() === req.user._id.toString())
       return res.status(400).json({ message: "You cannot delete your own account" });
+
+    if (user.role === "SuperAdmin")
+      return res.status(403).json({ message: "Super Admin accounts cannot be deleted" });
 
     await user.deleteOne();
     res.json({ message: "User deleted successfully" });
@@ -142,6 +150,9 @@ export const toggleUserStatus = async (req, res) => {
 
     if (user._id.toString() === req.user._id.toString())
       return res.status(400).json({ message: "You cannot deactivate your own account" });
+
+    if (user.role === "SuperAdmin")
+      return res.status(403).json({ message: "Super Admin accounts cannot be deactivated" });
 
     user.isActive = !user.isActive;
     await user.save();
