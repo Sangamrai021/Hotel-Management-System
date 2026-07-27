@@ -1039,6 +1039,12 @@ body {
   gap: 10px;
 }
 
+.page-pg-ctrls .btn {
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 /* SKELETON */
 
 .page-skel-table {
