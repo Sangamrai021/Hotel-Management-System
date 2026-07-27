@@ -42,109 +42,109 @@ const Hotels = () => {
         }
     };
 
-    if (loading) return <div style={styles.center}>Loading...</div>;
+    if (loading) return (
+        <div className="page-container">
+            <div className="page-header"><div style={{ height: "24px", width: "200px" }} className="dash-skel" /></div>
+            <div className="page-toolbar"><div className="dash-skel" style={{ width: "320px", height: "36px", borderRadius: "6px" }} /></div>
+            <div className="page-skel-table">
+                {[1, 2, 3].map((i) => (
+                    <div key={i} className="page-skel-row">
+                        <div className="page-skel-cell" style={{ width: "5%" }} />
+                        <div className="page-skel-cell" style={{ width: "20%" }} />
+                        <div className="page-skel-cell" style={{ width: "12%" }} />
+                        <div className="page-skel-cell" style={{ width: "14%" }} />
+                        <div className="page-skel-cell" style={{ width: "20%" }} />
+                        <div className="page-skel-cell" style={{ width: "8%" }} />
+                        <div className="page-skel-cell" style={{ width: "8%" }} />
+                        <div className="page-skel-cell" style={{ width: "12%" }} />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 
     return (
-        <div style={styles.container}>
+        <div className="page-container">
             {/* Header */}
-            <div style={styles.header}>
+            <div className="page-header">
                 <div>
-                    <h2 style={styles.title}>Hotel Management</h2>
-                    <p style={styles.subtitle}>Manage all hotels in the system</p>
+                    <div className="page-header-title">Hotel Management</div>
+                    <div className="page-header-sub">Manage all hotels in the system</div>
                 </div>
-                <button
-                    onClick={() => navigate("/hotels/add")}
-                    className="btn btn-primary btn-lg"
-                    style={styles.addButton}
-                >
+                <button onClick={() => navigate("/hotels/add")} className="btn btn-primary btn-lg">
                     + Add New Hotel
                 </button>
             </div>
 
             {/* Search */}
-            <div style={styles.filters}>
-                <input
-                    type="text"
-                    placeholder="Search by hotel name or city..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="input"
-                    style={styles.input}
-                />
+            <div className="page-toolbar">
+                <div className="page-toolbar-left">
+                    <input
+                        type="text"
+                        placeholder="Search by hotel name or city..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="input"
+                        style={{ minWidth: "300px" }}
+                    />
+                </div>
             </div>
 
-            {/* Table */}
             {hotels.length === 0 ? (
-                <div style={styles.empty}>No hotels found.</div>
+                <div className="page-empty">
+                    <div className="page-empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="4" y="2" width="16" height="20" rx="1" />
+                            <path d="M9 2v4h6V2M9 10h2v2H9zm4 0h2v2h-2zM9 14h2v2H9zm4 0h2v2h-2z" />
+                        </svg>
+                    </div>
+                    <div className="page-empty-text">No hotels found</div>
+                    <div className="page-empty-hint">Add a new hotel to get started</div>
+                </div>
             ) : (
                 <>
-                    <table className="table-hover" style={styles.table}>
-                        <thead>
-                            <tr style={styles.thead}>
-                                <th style={styles.th}>#</th>
-                                <th style={styles.th}>Hotel Name</th>
-                                <th style={styles.th}>City</th>
-                                <th style={styles.th}>Phone</th>
-                                <th style={styles.th}>Email</th>
-                                <th style={styles.th}>Rooms</th>
-                                <th style={styles.th}>Staff</th>
-                                <th style={styles.th}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {hotels.map((hotel, index) => (
-                                <tr key={hotel._id} style={styles.tr}>
-                                    <td style={styles.td}>{index + 1}</td>
-                                    <td style={styles.td}>
-                                        <div style={styles.hotelName}>{hotel.name}</div>
-                                        <div style={styles.hotelAddress}>{hotel.address}</div>
-                                    </td>
-                                    <td style={styles.td}>{hotel.city}</td>
-                                    <td style={styles.td}>{hotel.phone}</td>
-                                    <td style={styles.td}>{hotel.email}</td>
-                                    <td style={styles.td}>{hotel.roomCount || 0}</td>
-                                    <td style={styles.td}>{hotel.staffCount || 0}</td>
-                                    <td style={styles.td}>
-                                        <button
-                                            onClick={() => navigate(`/hotels/edit/${hotel._id}`)}
-                                            className="btn btn-edit btn-sm"
-                                            style={styles.editBtn}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => setDeleteModal({ show: true, hotel })}
-                                            className="btn btn-danger btn-sm"
-                                            style={styles.deleteBtn}
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
+                    <div className="page-table-wrap">
+                        <table className="page-table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: "40px" }}>#</th>
+                                    <th>Hotel Name</th>
+                                    <th>City</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Rooms</th>
+                                    <th>Staff</th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {hotels.map((hotel, index) => (
+                                    <tr key={hotel._id}>
+                                        <td>{(currentPage - 1) * 10 + index + 1}</td>
+                                        <td>
+                                            <div style={{ fontWeight: 600, color: "#1a1a2e", marginBottom: "2px" }}>{hotel.name}</div>
+                                            <div style={{ fontSize: "12px", color: "#999" }}>{hotel.address}</div>
+                                        </td>
+                                        <td>{hotel.city}</td>
+                                        <td>{hotel.phone}</td>
+                                        <td>{hotel.email}</td>
+                                        <td>{hotel.roomCount || 0}</td>
+                                        <td>{hotel.staffCount || 0}</td>
+                                        <td>
+                                            <button onClick={() => navigate(`/hotels/edit/${hotel._id}`)} className="btn btn-edit btn-sm">Edit</button>
+                                            <button onClick={() => setDeleteModal({ show: true, hotel })} className="btn btn-danger btn-sm" style={{ marginLeft: "6px" }}>Delete</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    {/* Pagination */}
-                    <div style={styles.pagination}>
-                        <span style={styles.pageInfo}>Showing page {currentPage} of {totalPages}</span>
-                        <div style={styles.paginationControls}>
-                            <button
-                                onClick={() => fetchHotels(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="btn btn-primary"
-                                style={styles.pageBtn}
-                            >
-                                ← Previous
-                            </button>
-                            <button
-                                onClick={() => fetchHotels(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className="btn btn-primary"
-                                style={styles.pageBtn}
-                            >
-                                Next →
-                            </button>
+                    <div className="page-pagination">
+                        <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
+                        <div className="page-pg-ctrls">
+                            <button onClick={() => fetchHotels(currentPage - 1)} disabled={currentPage === 1} className="btn btn-primary">← Previous</button>
+                            <button onClick={() => fetchHotels(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-primary">Next →</button>
                         </div>
                     </div>
                 </>

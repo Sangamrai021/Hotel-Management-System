@@ -2,89 +2,137 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/axios";
 
+const LoadingSkeleton = () => (
+  <div className="page-container">
+    <div className="page-header"><div style={{ height: "24px", width: "140px" }} className="dash-skel" /></div>
+    <div className="page-skel-table" style={{ marginTop: "20px" }}>
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="page-skel-row">
+          <div className="page-skel-cell" style={{ width: "16%" }} />
+          <div className="page-skel-cell" style={{ width: "12%" }} />
+          <div className="page-skel-cell" style={{ width: "12%" }} />
+          <div className="page-skel-cell" style={{ width: "12%" }} />
+          <div className="page-skel-cell" style={{ width: "6%" }} />
+          <div className="page-skel-cell" style={{ width: "14%" }} />
+          <div className="page-skel-cell" style={{ width: "14%" }} />
+          <div className="page-skel-cell" style={{ width: "10%" }} />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const Invoices = () => {
     const [invoices, setInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [search, setSearch] = useState("");
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchInvoices = async () => {
-            try {
-                const res = await API.get("/invoices");
-                setInvoices(res.data.invoices);
-            } catch {
-                console.error("Failed to fetch invoices");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchInvoices();
-    }, []);
+    const fetchInvoices = async (page = 1) => {
+        try {
+            const res = await API.get("/invoices", { params: { search, page, limit: 10 } });
+            setInvoices(res.data.invoices);
+            setTotalPages(res.data.totalPages || 1);
+            setCurrentPage(res.data.currentPage || 1);
+        } catch {
+            console.error("Failed to fetch invoices");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    if (loading) return <div style={styles.center}>Loading...</div>;
+    useEffect(() => { fetchInvoices(); }, [search]);
+
+    if (loading) return <LoadingSkeleton />;
 
     return (
-        <div style={styles.container}>
-            <div style={styles.header}>
-                <h2 style={styles.title}>Invoices</h2>
+        <div className="page-container">
+            <div className="page-header">
+                <div>
+                    <div className="page-header-title">Invoices</div>
+                    <div className="page-header-sub">View all generated invoices</div>
+                </div>
+            </div>
+
+            <div className="page-toolbar">
+                <div className="page-toolbar-left">
+                    <input
+                        type="text"
+                        placeholder="Search by guest name or room..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="input"
+                        style={{ minWidth: "240px" }}
+                    />
+                </div>
             </div>
 
             {invoices.length === 0 ? (
-                <div style={styles.empty}>No invoices found. Generate one from the Bookings page.</div>
+                <div className="page-empty">
+                    <div className="page-empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
+                        </svg>
+                    </div>
+                    <div className="page-empty-text">No invoices found</div>
+                    <div className="page-empty-hint">Generate one from the Bookings page</div>
+                </div>
             ) : (
-                <table style={styles.table}>
-                    <thead>
-                        <tr style={styles.thead}>
-                            <th style={styles.th}>Guest</th>
-                            <th style={styles.th}>Room</th>
-                            <th style={styles.th}>Check In</th>
-                            <th style={styles.th}>Check Out</th>
-                            <th style={styles.th}>Days</th>
-                            <th style={styles.th}>Total Amount</th>
-                            <th style={styles.th}>Invoice Date</th>
-                            <th style={styles.th}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {invoices.map((invoice) => (
-                            <tr key={invoice._id} style={styles.tr}>
-                                <td style={styles.td}>{invoice.guestName}</td>
-                                <td style={styles.td}>{invoice.roomNumber}</td>
-                                <td style={styles.td}>{new Date(invoice.checkIn).toLocaleDateString()}</td>
-                                <td style={styles.td}>{new Date(invoice.checkOut).toLocaleDateString()}</td>
-                                <td style={styles.td}>{invoice.days}</td>
-                                <td style={styles.td}>Rs. {invoice.totalAmount?.toLocaleString()}</td>
-                                <td style={styles.td}>{new Date(invoice.invoiceDate).toLocaleDateString()}</td>
-                                <td style={styles.td}>
-                                    <button
-                                        onClick={() => navigate(`/invoices/${invoice.booking}`)}
-                                        className="shared-view-btn"
-                                        style={styles.viewBtn}
-                                    >
-                                        View
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <>
+                    <div className="page-table-wrap">
+                        <table className="page-table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Guest</th>
+                                    <th>Room</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Days</th>
+                                    <th>Total Amount</th>
+                                    <th>Invoice Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {invoices.map((invoice) => (
+                                    <tr key={invoice._id}>
+                                        <td>{invoice.guestName}</td>
+                                        <td>{invoice.roomNumber}</td>
+                                        <td>{new Date(invoice.checkIn).toLocaleDateString()}</td>
+                                        <td>{new Date(invoice.checkOut).toLocaleDateString()}</td>
+                                        <td>{invoice.days}</td>
+                                        <td>Rs. {invoice.totalAmount?.toLocaleString()}</td>
+                                        <td>{new Date(invoice.invoiceDate).toLocaleDateString()}</td>
+                                        <td>
+                                            <button onClick={() => navigate(`/invoices/${invoice.booking}`)} className="btn btn-edit btn-sm">
+                                                View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {totalPages > 1 && (
+                        <div className="page-pagination">
+                            <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
+                            <div className="page-pg-ctrls">
+                                <button onClick={() => fetchInvoices(currentPage - 1)} disabled={currentPage === 1} className="btn btn-primary">← Previous</button>
+                                <button onClick={() => fetchInvoices(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-primary">Next →</button>
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );
-};
-
-const styles = {
-    container: { padding: "24px" },
-    header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" },
-    title: { fontSize: "24px", color: "#1a1a2e" },
-    table: { width: "100%", borderCollapse: "collapse", backgroundColor: "white", borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.08)" },
-    thead: { backgroundColor: "#1a1a2e" },
-    th: { padding: "14px 16px", textAlign: "left", color: "white", fontWeight: "600" },
-    tr: { borderBottom: "1px solid #f0f0f0" },
-    td: { padding: "12px 16px", color: "#333" },
-    viewBtn: { backgroundColor: "#4361ee", color: "white", border: "none", padding: "6px 14px", borderRadius: "6px", cursor: "pointer" },
-    empty: { textAlign: "center", padding: "40px", color: "#666" },
-    center: { display: "flex", justifyContent: "center", alignItems: "center", height: "80vh", fontSize: "18px" },
 };
 
 export default Invoices;

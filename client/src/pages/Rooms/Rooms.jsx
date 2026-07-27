@@ -2,6 +2,27 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/axios";
 
+const LoadingSkeleton = () => (
+  <div className="page-container">
+    <div className="page-header"><div style={{ height: "24px", width: "160px" }} className="dash-skel" /></div>
+    <div className="page-toolbar">
+      <div className="dash-skel" style={{ width: "220px", height: "36px", borderRadius: "6px" }} />
+      <div className="dash-skel" style={{ width: "120px", height: "36px", borderRadius: "6px" }} />
+    </div>
+    <div className="page-skel-table">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="page-skel-row">
+          <div className="page-skel-cell" style={{ width: "15%" }} />
+          <div className="page-skel-cell" style={{ width: "15%" }} />
+          <div className="page-skel-cell" style={{ width: "20%" }} />
+          <div className="page-skel-cell" style={{ width: "15%" }} />
+          <div className="page-skel-cell" style={{ width: "25%" }} />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const Rooms = () => {
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -58,132 +79,110 @@ const Rooms = () => {
         }
     };
 
-    if (loading) return <div style={styles.center}>Loading...</div>;
+    if (loading) return <LoadingSkeleton />;
 
     return (
-        <div style={styles.container}>
-            <style>{`
-                .rooms-edit-btn,
-                .rooms-delete-btn {
-                    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background-color 0.18s ease;
-                }
-
-                .rooms-edit-btn:hover,
-                .rooms-delete-btn:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
-                    filter: brightness(1.05);
-                }
-
-                .rooms-edit-btn:active,
-                .rooms-delete-btn:active {
-                    transform: translateY(0) scale(0.98);
-                    box-shadow: none;
-                }
-
-                .rooms-edit-btn:focus-visible,
-                .rooms-delete-btn:focus-visible {
-                    outline: 2px solid #f4a261;
-                    outline-offset: 3px;
-                }
-
-                .rooms-edit-btn:hover {
-                    background-color: #5775f2;
-                }
-
-                .rooms-delete-btn:hover {
-                    background-color: #ff4d5a;
-                }
-            `}</style>
-            <div style={styles.header}>
-                <h2 style={styles.title}>Rooms</h2>
+        <div className="page-container">
+            <div className="page-header">
+                <div>
+                    <div className="page-header-title">Rooms</div>
+                    <div className="page-header-sub">Manage all room inventory</div>
+                </div>
+                <button onClick={() => navigate("/rooms/add")} className="btn btn-primary btn-lg">
+                    + Add Room
+                </button>
             </div>
 
-            <div style={styles.controlsRow}>
-                <div style={styles.filters}>
+            <div className="page-toolbar">
+                <div className="page-toolbar-left">
                     <input
                         type="text"
                         placeholder="Search by room number..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        style={styles.input}
+                        className="input"
+                        style={{ minWidth: "200px" }}
                     />
-                    <select value={roomType} onChange={(e) => setRoomType(e.target.value)} style={styles.select}>
+                    <select value={roomType} onChange={(e) => setRoomType(e.target.value)} className="select" style={{ minWidth: "130px" }}>
                         <option value="">All Types</option>
                         <option value="Standard">Standard</option>
                         <option value="Deluxe">Deluxe</option>
                         <option value="Suite">Suite</option>
                     </select>
-                    <select value={status} onChange={(e) => setStatus(e.target.value)} style={styles.select}>
+                    <select value={status} onChange={(e) => setStatus(e.target.value)} className="select" style={{ minWidth: "130px" }}>
                         <option value="">All Status</option>
                         <option value="Available">Available</option>
                         <option value="Occupied">Occupied</option>
                     </select>
                 </div>
-
-                <button onClick={() => navigate("/rooms/add")} className="shared-add-btn" style={styles.addButton}>
-                    + Add Room
-                </button>
             </div>
 
             {rooms.length === 0 ? (
-                <div style={styles.empty}>No rooms found.</div>
+                <div className="page-empty">
+                    <div className="page-empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="4" y="2" width="16" height="20" rx="1" />
+                            <path d="M9 2v4h6V2M9 10h2v2H9zm4 0h2v2h-2zM9 14h2v2H9zm4 0h2v2h-2z" />
+                        </svg>
+                    </div>
+                    <div className="page-empty-text">No rooms found</div>
+                    <div className="page-empty-hint">Try adjusting your search or filters</div>
+                </div>
             ) : (
                 <>
-                    <table style={styles.table}>
-                        <thead>
-                            <tr style={styles.thead}>
-                                <th style={styles.th}>Room No</th>
-                                <th style={styles.th}>Type</th>
-                                <th style={styles.th}>Price/Night</th>
-                                <th style={styles.th}>Status</th>
-                                <th style={styles.th}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rooms.map((room) => (
-                                <tr key={room._id} style={styles.tr}>
-                                    <td style={styles.td}>{room.roomNumber}</td>
-                                    <td style={styles.td}>{room.roomType}</td>
-                                    <td style={styles.td}>Rs. {room.pricePerNight.toLocaleString()}</td>
-                                    <td style={styles.td}>
-                                        <span style={{
-                                            ...styles.badge,
-                                            backgroundColor: room.status === "Available" ? "#d4edda" : "#f8d7da",
-                                            color: room.status === "Available" ? "#155724" : "#721c24",
-                                        }}>
-                                            {room.status}
-                                        </span>
-                                    </td>
-                                    <td style={styles.td}>
-                                        <button onClick={() => navigate(`/rooms/edit/${room._id}`)} className="rooms-edit-btn" style={styles.editBtn}>
-                                            Edit
-                                        </button>
-                                        <button onClick={() => handleDelete(room._id)} className="rooms-delete-btn" style={styles.deleteBtn}>
-                                            Delete
-                                        </button>
-                                    </td>
+                    <div className="page-table-wrap">
+                        <table className="page-table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Room No</th>
+                                    <th>Type</th>
+                                    <th>Price/Night</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {rooms.map((room) => (
+                                    <tr key={room._id}>
+                                        <td>{room.roomNumber}</td>
+                                        <td>{room.roomType}</td>
+                                        <td>Rs. {room.pricePerNight.toLocaleString()}</td>
+                                        <td>
+                                            <span className="badge" style={{
+                                                backgroundColor: room.status === "Available" ? "#d4edda" : "#f8d7da",
+                                                color: room.status === "Available" ? "#155724" : "#721c24",
+                                            }}>
+                                                {room.status}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button onClick={() => navigate(`/rooms/edit/${room._id}`)} className="btn btn-edit btn-sm">
+                                                Edit
+                                            </button>
+                                            <button onClick={() => handleDelete(room._id)} className="btn btn-danger btn-sm" style={{ marginLeft: "6px" }}>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <div style={styles.pagination}>
-                        <span style={styles.pageInfo}>Showing page {currentPage} of {totalPages}</span>
-                        <div style={styles.paginationControls}>
+                    <div className="page-pagination">
+                        <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
+                        <div className="page-pg-ctrls">
                             <button
                                 onClick={() => fetchRooms(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="shared-page-btn"
-                                style={styles.pageBtn}
+                                className="btn btn-primary"
                             >
                                 ← Previous
                             </button>
                             <button
                                 onClick={() => fetchRooms(currentPage + 1)}
                                 disabled={currentPage === totalPages}
-                                className="shared-page-btn"
-                                style={styles.pageBtn}
+                                className="btn btn-primary"
                             >
                                 Next →
                             </button>
@@ -193,31 +192,6 @@ const Rooms = () => {
             )}
         </div>
     );
-};
-
-const styles = {
-    container: { padding: "24px" },
-    header: { display: "flex", alignItems: "center", marginBottom: "12px" },
-    title: { fontSize: "24px", color: "#1a1a2e" },
-    controlsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "20px" },
-    addButton: { backgroundColor: "#1a1a2e", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontSize: "15px", flexShrink: 0, whiteSpace: "nowrap" },
-    filters: { display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center", flex: 1 },
-    input: { padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", width: "220px" },
-    select: { padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" },
-    table: { width: "100%", borderCollapse: "collapse", backgroundColor: "white", borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.08)" },
-    thead: { backgroundColor: "#1a1a2e" },
-    th: { padding: "14px 16px", textAlign: "left", color: "white", fontWeight: "600" },
-    tr: { borderBottom: "1px solid #f0f0f0" },
-    td: { padding: "12px 16px", color: "#333" },
-    badge: { padding: "4px 10px", borderRadius: "20px", fontSize: "13px", fontWeight: "500" },
-    editBtn: { backgroundColor: "#4361ee", color: "white", border: "none", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", marginRight: "8px" },
-    deleteBtn: { backgroundColor: "#e63946", color: "white", border: "none", padding: "6px 14px", borderRadius: "6px", cursor: "pointer" },
-    empty: { textAlign: "center", padding: "40px", color: "#666" },
-    center: { display: "flex", justifyContent: "center", alignItems: "center", height: "80vh", fontSize: "18px" },
-    pagination: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginTop: "24px" },
-    paginationControls: { display: "flex", alignItems: "center", gap: "12px" },
-    pageBtn: { padding: "8px 20px", backgroundColor: "#1a1a2e", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px" },
-    pageInfo: { fontSize: "14px", color: "#333", fontWeight: "500" },
 };
 
 export default Rooms;

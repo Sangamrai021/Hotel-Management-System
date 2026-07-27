@@ -1,7 +1,40 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/axios";
-import Button from "../../components/Button";
+
+const getStatusColor = (status) => {
+    switch (status) {
+        case "Booked": return { bg: "#d4edda", color: "#155724" };
+        case "CheckedIn": return { bg: "#cce5ff", color: "#004085" };
+        case "CheckedOut": return { bg: "#e2e3e5", color: "#383d41" };
+        case "Cancelled": return { bg: "#f8d7da", color: "#721c24" };
+        default: return { bg: "#e2e3e5", color: "#383d41" };
+    }
+};
+
+const LoadingSkeleton = () => (
+  <div className="page-container">
+    <div className="page-header"><div style={{ height: "24px", width: "160px" }} className="dash-skel" /></div>
+    <div className="page-toolbar">
+      <div className="dash-skel" style={{ width: "180px", height: "36px", borderRadius: "6px" }} />
+      <div className="dash-skel" style={{ width: "120px", height: "36px", borderRadius: "6px" }} />
+    </div>
+    <div className="page-skel-table">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="page-skel-row">
+          <div className="page-skel-cell" style={{ width: "14%" }} />
+          <div className="page-skel-cell" style={{ width: "10%" }} />
+          <div className="page-skel-cell" style={{ width: "12%" }} />
+          <div className="page-skel-cell" style={{ width: "12%" }} />
+          <div className="page-skel-cell" style={{ width: "6%" }} />
+          <div className="page-skel-cell" style={{ width: "14%" }} />
+          <div className="page-skel-cell" style={{ width: "10%" }} />
+          <div className="page-skel-cell" style={{ width: "18%" }} />
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 const Bookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -16,7 +49,7 @@ const Bookings = () => {
             const res = await API.get("/bookings", { params: { status, page, limit: 10 } });
             setBookings(res.data.bookings);
             setTotalPages(res.data.totalPages);
-            setCurrentPage(res.data.currentPage || page);
+            setCurrentPage(res.data.currentPage);
         } catch (error) {
             console.log(error);
             console.error("Failed to fetch bookings");
@@ -39,11 +72,10 @@ const Bookings = () => {
                 setLoading(false);
             }
         };
-
         loadBookings();
     }, [status]);
 
-    const handleStatusChange = async (id, newStatus) => {
+    const handleStatusUpdate = async (id, newStatus) => {
         try {
             await API.patch(`/bookings/${id}/status`, { status: newStatus });
             fetchBookings(currentPage);
@@ -53,7 +85,7 @@ const Bookings = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this booking?")) return;
+        if (!window.confirm("Delete this booking?")) return;
         try {
             await API.delete(`/bookings/${id}`);
             fetchBookings(currentPage);
@@ -62,125 +94,125 @@ const Bookings = () => {
         }
     };
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case "Booked": return { bg: "#cce5ff", color: "#004085" };
-            case "CheckedIn": return { bg: "#d4edda", color: "#155724" };
-            case "CheckedOut": return { bg: "#e2e3e5", color: "#383d41" };
-            case "Cancelled": return { bg: "#f8d7da", color: "#721c24" };
-            default: return { bg: "#f0f0f0", color: "#333" };
-        }
+    const handleInvoice = (bookingId) => {
+        navigate(`/invoices/${bookingId}`);
     };
 
-    if (loading) return <div style={styles.center}>Loading...</div>;
+    if (loading) return <LoadingSkeleton />;
 
     return (
-        <div style={styles.container}>
-            <div style={styles.header}>
-                <h2 style={styles.title}>Bookings</h2>
-            </div>
-
-            <div style={styles.controlsRow}>
-                <div style={styles.filters}>
-                    <select value={status} onChange={(e) => setStatus(e.target.value)} style={styles.select}>
-                        <option value="">All Status</option>
-                        <option value="Booked">Booked</option>
-                        <option value="CheckedIn">CheckedIn</option>
-                        <option value="CheckedOut">CheckedOut</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
+        <div className="page-container">
+            <div className="page-header">
+                <div>
+                    <div className="page-header-title">Bookings</div>
+                    <div className="page-header-sub">Manage reservations and check-ins</div>
                 </div>
-
-                <button onClick={() => navigate("/bookings/add")} className="shared-add-btn" style={styles.addButton}>
+                <button onClick={() => navigate("/bookings/add")} className="btn btn-primary btn-lg">
                     + Add Booking
                 </button>
             </div>
 
+            <div className="page-toolbar">
+                <div className="page-toolbar-left">
+                    <select value={status} onChange={(e) => setStatus(e.target.value)} className="select" style={{ minWidth: "160px" }}>
+                        <option value="">All Status</option>
+                        <option value="Booked">Booked</option>
+                        <option value="CheckedIn">Checked In</option>
+                        <option value="CheckedOut">Checked Out</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
             {bookings.length === 0 ? (
-                <div style={styles.empty}>No bookings found.</div>
+                <div className="page-empty">
+                    <div className="page-empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                    </div>
+                    <div className="page-empty-text">No bookings found</div>
+                    <div className="page-empty-hint">Create a new booking to get started</div>
+                </div>
             ) : (
                 <>
-                    <table style={styles.table}>
-                        <thead>
-                            <tr style={styles.thead}>
-                                <th style={styles.th}>Guest</th>
-                                <th style={styles.th}>Room</th>
-                                <th style={styles.th}>Check In</th>
-                                <th style={styles.th}>Check Out</th>
-                                <th style={styles.th}>Days</th>
-                                <th style={styles.th}>Total</th>
-                                <th style={styles.th}>Status</th>
-                                <th style={styles.th}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {bookings.map((booking) => {
-                                const { bg, color } = getStatusColor(booking.status);
-                                return (
-                                    <tr key={booking._id} style={styles.tr}>
-                                        <td style={styles.td}>{booking.guest?.name}</td>
-                                        <td style={styles.td}>{booking.room?.roomNumber}</td>
-                                        <td style={styles.td}>{new Date(booking.checkIn).toLocaleDateString()}</td>
-                                        <td style={styles.td}>{new Date(booking.checkOut).toLocaleDateString()}</td>
-                                        <td style={styles.td}>{booking.days}</td>
-                                        <td style={styles.td}>Rs. {booking.totalAmount?.toLocaleString()}</td>
-                                        <td style={styles.td}>
-                                            <span style={{ ...styles.badge, backgroundColor: bg, color }}>
-                                                {booking.status}
-                                            </span>
-                                        </td>
-                                        <td style={styles.td}>
-                                            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                    <div className="page-table-wrap">
+                        <table className="page-table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Guest</th>
+                                    <th>Room</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Days</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {bookings.map((booking) => {
+                                    const sc = getStatusColor(booking.status);
+                                    return (
+                                        <tr key={booking._id}>
+                                            <td>{booking.guest?.name}</td>
+                                            <td>{booking.room?.roomNumber}</td>
+                                            <td>{new Date(booking.checkIn).toLocaleDateString()}</td>
+                                            <td>{new Date(booking.checkOut).toLocaleDateString()}</td>
+                                            <td>{booking.days}</td>
+                                            <td>Rs. {booking.totalAmount?.toLocaleString()}</td>
+                                            <td>
+                                                <span className="badge" style={{ backgroundColor: sc.bg, color: sc.color }}>
+                                                    {booking.status}
+                                                </span>
+                                            </td>
+                                            <td>
                                                 {booking.status === "Booked" && (
-                                                    <Button color="#2a9d8f" size="sm" minWidth="110px" onClick={() => handleStatusChange(booking._id, "CheckedIn")}>
-                                                        Check In
-                                                    </Button>
+                                                    <>
+                                                        <button onClick={() => handleStatusUpdate(booking._id, "CheckedIn")} className="btn btn-success btn-sm">
+                                                            Check In
+                                                        </button>
+                                                        <button onClick={() => handleStatusUpdate(booking._id, "Cancelled")} className="btn btn-warning btn-sm" style={{ marginLeft: "4px" }}>
+                                                            Cancel
+                                                        </button>
+                                                    </>
                                                 )}
                                                 {booking.status === "CheckedIn" && (
-                                                    <Button color="#e9c46a" textColor="#333" size="sm" minWidth="110px" onClick={() => handleStatusChange(booking._id, "CheckedOut")}>
+                                                    <button onClick={() => handleStatusUpdate(booking._id, "CheckedOut")} className="btn btn-warning btn-sm">
                                                         Check Out
-                                                    </Button>
+                                                    </button>
                                                 )}
-                                                {booking.status === "CheckedOut" && (
-                                                    <Button color="#4361ee" size="sm" minWidth="110px" onClick={() => navigate(`/invoices/${booking._id}`)}>
-                                                        Invoice
-                                                    </Button>
-                                                )}
-                                                {booking.status === "Booked" && (
-                                                    <Button color="#f4a261" size="sm" minWidth="110px" onClick={() => handleStatusChange(booking._id, "Cancelled")}>
-                                                        Cancel
-                                                    </Button>
-                                                )}
-                                                {booking.status !== "CheckedIn" && (
-                                                    <Button color="#e63946" size="sm" minWidth="110px" onClick={() => handleDelete(booking._id)}>
-                                                        Delete
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </td>
+                                                <button onClick={() => handleInvoice(booking._id)} className="btn btn-edit btn-sm" style={{ marginLeft: "4px" }}>
+                                                    Invoice
+                                                </button>
+                                                <button onClick={() => handleDelete(booking._id)} className="btn btn-danger btn-sm" style={{ marginLeft: "4px" }}>
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
 
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-
-                    <div style={styles.pagination}>
-                        <span style={styles.pageInfo}>Showing page {currentPage} of {totalPages}</span>
-                        <div style={styles.paginationControls}>
+                    <div className="page-pagination">
+                        <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
+                        <div className="page-pg-ctrls">
                             <button
                                 onClick={() => fetchBookings(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="shared-page-btn"
-                                style={styles.pageBtn}
+                                className="btn btn-primary"
                             >
                                 ← Previous
                             </button>
                             <button
                                 onClick={() => fetchBookings(currentPage + 1)}
                                 disabled={currentPage === totalPages}
-                                className="shared-page-btn"
-                                style={styles.pageBtn}
+                                className="btn btn-primary"
                             >
                                 Next →
                             </button>
@@ -190,29 +222,6 @@ const Bookings = () => {
             )}
         </div>
     );
-};
-
-const styles = {
-    container: { padding: "24px" },
-    header: { display: "flex", alignItems: "center", marginBottom: "12px" },
-    title: { fontSize: "24px", color: "#1a1a2e" },
-    controlsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "20px" },
-    addButton: { backgroundColor: "#1a1a2e", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontSize: "15px", flexShrink: 0, whiteSpace: "nowrap" },
-    filters: { display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center", flex: 1 },
-    select: { padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" },
-    table: { width: "100%", borderCollapse: "collapse", backgroundColor: "white", borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.08)" },
-    thead: { backgroundColor: "#1a1a2e" },
-    th: { padding: "14px 16px", textAlign: "left", color: "white", fontWeight: "600" },
-    tr: { borderBottom: "1px solid #f0f0f0" },
-    td: { padding: "12px 16px", color: "#333" },
-    badge: { minWidth: "110px", padding: "4px 10px", borderRadius: "20px", fontSize: "13px", fontWeight: "500", display: "inline-flex", justifyContent: "center", alignItems: "center" },
-    deleteBtn: { backgroundColor: "#e63946", color: "white", border: "none", padding: "6px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "13px" },
-    empty: { textAlign: "center", padding: "40px", color: "#666" },
-    center: { display: "flex", justifyContent: "center", alignItems: "center", height: "80vh", fontSize: "18px" },
-    pagination: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginTop: "24px" },
-    paginationControls: { display: "flex", alignItems: "center", gap: "12px" },
-    pageBtn: { padding: "8px 20px", backgroundColor: "#1a1a2e", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px" },
-    pageInfo: { fontSize: "14px", color: "#333", fontWeight: "500" },
 };
 
 export default Bookings;

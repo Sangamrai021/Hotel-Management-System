@@ -2,6 +2,27 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/axios";
 
+const LoadingSkeleton = () => (
+  <div className="page-container">
+    <div className="page-header"><div style={{ height: "24px", width: "140px" }} className="dash-skel" /></div>
+    <div className="page-toolbar">
+      <div className="dash-skel" style={{ width: "300px", height: "36px", borderRadius: "6px" }} />
+      <div className="dash-skel" style={{ width: "120px", height: "36px", borderRadius: "6px" }} />
+    </div>
+    <div className="page-skel-table">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="page-skel-row">
+          <div className="page-skel-cell" style={{ width: "22%" }} />
+          <div className="page-skel-cell" style={{ width: "25%" }} />
+          <div className="page-skel-cell" style={{ width: "18%" }} />
+          <div className="page-skel-cell" style={{ width: "15%" }} />
+          <div className="page-skel-cell" style={{ width: "15%" }} />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const Guests = () => {
     const [guests, setGuests] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -52,121 +73,94 @@ const Guests = () => {
         }
     };
 
-    if (loading) return <div style={styles.center}>Loading...</div>;
+    if (loading) return <LoadingSkeleton />;
 
     return (
-        <div style={styles.container}>
-            <style>{`
-                .guests-edit-btn,
-                .guests-delete-btn {
-                    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background-color 0.18s ease;
-                }
-
-                .guests-edit-btn:hover,
-                .guests-delete-btn:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
-                    filter: brightness(1.05);
-                }
-
-                .guests-edit-btn:active,
-                .guests-delete-btn:active {
-                    transform: translateY(0) scale(0.98);
-                    box-shadow: none;
-                }
-
-                .guests-edit-btn:focus-visible,
-                .guests-delete-btn:focus-visible {
-                    outline: 2px solid #f4a261;
-                    outline-offset: 3px;
-                }
-
-                .guests-edit-btn:hover {
-                    background-color: #5775f2;
-                }
-
-                .guests-delete-btn:hover {
-                    background-color: #ff4d5a;
-                }
-            `}</style>
-            <div style={styles.header}>
-                <h2 style={styles.title}>Guests</h2>
+        <div className="page-container">
+            <div className="page-header">
+                <div>
+                    <div className="page-header-title">Guests</div>
+                    <div className="page-header-sub">View and manage guest profiles</div>
+                </div>
+                <button onClick={() => navigate("/guests/add")} className="btn btn-primary btn-lg">
+                    + Add Guest
+                </button>
             </div>
 
-            <div style={styles.controlsRow}>
-                <div style={styles.filters}>
+            <div className="page-toolbar">
+                <div className="page-toolbar-left">
                     <input
                         type="text"
                         placeholder="Search by name, email or phone..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        style={styles.input}
+                        className="input"
+                        style={{ minWidth: "280px" }}
                     />
                 </div>
-
-                <button onClick={() => navigate("/guests/add")} className="shared-add-btn" style={styles.addButton}>
-                    + Add Guest
-                </button>
             </div>
 
             {guests.length === 0 ? (
-                <div style={styles.empty}>No guests found.</div>
+                <div className="page-empty">
+                    <div className="page-empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                            <path d="M16 3.13a4 4 0 010 7.75" />
+                        </svg>
+                    </div>
+                    <div className="page-empty-text">No guests found</div>
+                    <div className="page-empty-hint">Try adjusting your search</div>
+                </div>
             ) : (
                 <>
-                    <table style={styles.table}>
-                        <thead>
-                            <tr style={styles.thead}>
-                                <th style={styles.th}>Name</th>
-                                <th style={styles.th}>Email</th>
-                                <th style={styles.th}>Phone</th>
-                                <th style={styles.th}>ID Proof</th>
-                                <th style={styles.th}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {guests.map((guest) => (
-                                <tr key={guest._id} style={styles.tr}>
-                                    <td style={styles.td}>{guest.name}</td>
-                                    <td style={styles.td}>{guest.email}</td>
-                                    <td style={styles.td}>{guest.phone}</td>
-                                    <td style={styles.td}>{guest.idProof}</td>
-                                    <td style={styles.td}>
-                                        <button
-                                            onClick={() => navigate(`/guests/edit/${guest._id}`)}
-                                            className="guests-edit-btn"
-                                            style={styles.editBtn}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(guest._id)}
-                                            className="guests-delete-btn"
-                                            style={styles.deleteBtn}
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
+                    <div className="page-table-wrap">
+                        <table className="page-table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>ID Proof</th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {guests.map((guest) => (
+                                    <tr key={guest._id}>
+                                        <td>{guest.name}</td>
+                                        <td>{guest.email}</td>
+                                        <td>{guest.phone}</td>
+                                        <td>{guest.idProof}</td>
+                                        <td>
+                                            <button onClick={() => navigate(`/guests/edit/${guest._id}`)} className="btn btn-edit btn-sm">
+                                                Edit
+                                            </button>
+                                            <button onClick={() => handleDelete(guest._id)} className="btn btn-danger btn-sm" style={{ marginLeft: "6px" }}>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <div style={styles.pagination}>
-                        <span style={styles.pageInfo}>Showing page {currentPage} of {totalPages}</span>
-                        <div style={styles.paginationControls}>
+                    <div className="page-pagination">
+                        <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
+                        <div className="page-pg-ctrls">
                             <button
                                 onClick={() => fetchGuests(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="shared-page-btn"
-                                style={styles.pageBtn}
+                                className="btn btn-primary"
                             >
                                 ← Previous
                             </button>
                             <button
                                 onClick={() => fetchGuests(currentPage + 1)}
                                 disabled={currentPage === totalPages}
-                                className="shared-page-btn"
-                                style={styles.pageBtn}
+                                className="btn btn-primary"
                             >
                                 Next →
                             </button>
@@ -176,29 +170,6 @@ const Guests = () => {
             )}
         </div>
     );
-};
-
-const styles = {
-    container: { padding: "24px" },
-    header: { display: "flex", alignItems: "center", marginBottom: "12px" },
-    title: { fontSize: "24px", color: "#1a1a2e" },
-    controlsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "20px" },
-    addButton: { backgroundColor: "#1a1a2e", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontSize: "15px", flexShrink: 0, whiteSpace: "nowrap" },
-    filters: { display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center", flex: 1 },
-    input: { padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", width: "300px" },
-    table: { width: "100%", borderCollapse: "collapse", backgroundColor: "white", borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.08)" },
-    thead: { backgroundColor: "#1a1a2e" },
-    th: { padding: "14px 16px", textAlign: "left", color: "white", fontWeight: "600" },
-    tr: { borderBottom: "1px solid #f0f0f0" },
-    td: { padding: "12px 16px", color: "#333" },
-    editBtn: { backgroundColor: "#4361ee", color: "white", border: "none", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", marginRight: "8px" },
-    deleteBtn: { backgroundColor: "#e63946", color: "white", border: "none", padding: "6px 14px", borderRadius: "6px", cursor: "pointer" },
-    empty: { textAlign: "center", padding: "40px", color: "#666" },
-    center: { display: "flex", justifyContent: "center", alignItems: "center", height: "80vh", fontSize: "18px" },
-    pagination: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginTop: "24px" },
-    paginationControls: { display: "flex", alignItems: "center", gap: "12px" },
-    pageBtn: { padding: "8px 20px", backgroundColor: "#1a1a2e", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px" },
-    pageInfo: { fontSize: "14px", color: "#333", fontWeight: "500" },
 };
 
 export default Guests;

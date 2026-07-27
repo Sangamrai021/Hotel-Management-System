@@ -79,15 +79,36 @@ const Payments = () => {
         }
     };
 
-    if (loading) return <div style={styles.center}>Loading...</div>;
+    if (loading) return (
+        <div className="page-container">
+            <div className="page-header"><div style={{ height: "24px", width: "200px" }} className="dash-skel" /></div>
+            <div className="dash-kpi-grid">
+                {[1, 2, 3, 4].map((i) => <div key={i} className="dash-skel dash-skel-card" />)}
+            </div>
+            <div className="page-skel-table">
+                {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="page-skel-row">
+                        <div className="page-skel-cell" style={{ width: "16%" }} />
+                        <div className="page-skel-cell" style={{ width: "12%" }} />
+                        <div className="page-skel-cell" style={{ width: "12%" }} />
+                        <div className="page-skel-cell" style={{ width: "16%" }} />
+                        <div className="page-skel-cell" style={{ width: "10%" }} />
+                        <div className="page-skel-cell" style={{ width: "14%" }} />
+                        <div className="page-skel-cell" style={{ width: "10%" }} />
+                        <div className="page-skel-cell" style={{ width: "10%" }} />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 
     return (
-        <div style={styles.container}>
+        <div className="page-container">
             {/* Header */}
-            <div style={styles.header}>
+            <div className="page-header">
                 <div>
-                    <h2 style={styles.title}>Payment Collection</h2>
-                    <p style={styles.subtitle}>Collect and manage guest payments</p>
+                    <div className="page-header-title">Payment Collection</div>
+                    <div className="page-header-sub">Collect and manage guest payments</div>
                 </div>
             </div>
 
@@ -139,10 +160,20 @@ const Payments = () => {
 
             {/* Table */}
             {invoices.length === 0 ? (
-                <div style={styles.empty}>
-                    {activeTab === "pending"
-                        ? "No pending payments. All invoices are paid!"
-                        : "No payments found."}
+                <div className="page-empty">
+                    <div className="page-empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 12V7H5a2 2 0 010-4h14v4" />
+                            <path d="M3 5v14a2 2 0 002 2h16v-5" />
+                            <path d="M18 12a2 2 0 000 4h4v-4z" />
+                        </svg>
+                    </div>
+                    <div className="page-empty-text">
+                        {activeTab === "pending" ? "No pending payments" : "No payments found"}
+                    </div>
+                    <div className="page-empty-hint">
+                        {activeTab === "pending" ? "All invoices are paid!" : "Payments appear here once collected"}
+                    </div>
                 </div>
             ) : (
                 <>
