@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAllHotels } from "../../hooks/useHotels";
 import API from "../../api/axios";
 
 const AddUser = () => {
@@ -11,23 +12,13 @@ const AddUser = () => {
         hotel: "",
         phone: "",
     });
-    const [hotels, setHotels] = useState([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchHotels = async () => {
-            try {
-                const res = await API.get("/hotels", { params: { limit: 100 } });
-                setHotels(res.data.hotels);
-            } catch (err) {
-                console.error("Failed to fetch hotels");
-            }
-        };
-        fetchHotels();
-    }, []);
+    const { data: hotelsData } = useAllHotels();
+    const hotels = hotelsData?.hotels || [];
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });

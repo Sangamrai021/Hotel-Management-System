@@ -1,8 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useHotel } from "../../hooks/useHotels";
 import API from "../../api/axios";
 
 const EditHotel = () => {
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    const { data: hotelData, isLoading: hotelLoading } = useHotel(id);
     const [form, setForm] = useState({
         name: "",
         address: "",
@@ -10,28 +17,16 @@ const EditHotel = () => {
         phone: "",
         email: "",
     });
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    const { id } = useParams();
 
-    useEffect(() => {
-        const fetchHotel = async () => {
-            try {
-                const res = await API.get(`/hotels/${id}`);
-                setForm({
-                    name: res.data.name,
-                    address: res.data.address,
-                    city: res.data.city,
-                    phone: res.data.phone,
-                    email: res.data.email,
-                });
-            } catch (err) {
-                setError("Failed to load hotel");
-            }
-        };
-        fetchHotel();
-    }, [id]);
+    if (hotelData && !form.name) {
+        setForm({
+            name: hotelData.name,
+            address: hotelData.address,
+            city: hotelData.city,
+            phone: hotelData.phone,
+            email: hotelData.email,
+        });
+    }
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });

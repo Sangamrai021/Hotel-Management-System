@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../../api/axios";
+import { useInvoices } from "../../hooks/useInvoices";
 
 const LoadingSkeleton = () => (
   <div className="page-container">
@@ -23,29 +23,15 @@ const LoadingSkeleton = () => (
 );
 
 const Invoices = () => {
-    const [invoices, setInvoices] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const [search, setSearch] = useState("");
     const navigate = useNavigate();
+    const { data, isLoading } = useInvoices(currentPage, search);
 
-    const fetchInvoices = async (page = 1) => {
-        try {
-            const res = await API.get("/invoices", { params: { search, page, limit: 10 } });
-            setInvoices(res.data.invoices);
-            setTotalPages(res.data.totalPages || 1);
-            setCurrentPage(res.data.currentPage || 1);
-        } catch {
-            console.error("Failed to fetch invoices");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const invoices = data?.invoices || [];
+    const totalPages = data?.totalPages || 1;
 
-    useEffect(() => { fetchInvoices(); }, [search]);
-
-    if (loading) return <LoadingSkeleton />;
+    if (isLoading) return <LoadingSkeleton />;
 
     return (
         <div className="page-container">
@@ -124,8 +110,8 @@ const Invoices = () => {
                         <div className="page-pagination">
                             <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
                             <div className="page-pg-ctrls">
-                                <button onClick={() => fetchInvoices(currentPage - 1)} disabled={currentPage === 1} className="btn btn-primary">← Previous</button>
-                                <button onClick={() => fetchInvoices(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-primary">Next →</button>
+                                <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="btn btn-primary">← Previous</button>
+                                <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-primary">Next →</button>
                             </div>
                         </div>
                     )}

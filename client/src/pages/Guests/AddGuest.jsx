@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useAllHotels } from "../../hooks/useHotels";
 import API from "../../api/axios";
 
 const AddGuest = () => {
@@ -15,17 +16,11 @@ const AddGuest = () => {
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const [hotels, setHotels] = useState([]);
     const [selectedHotel, setSelectedHotel] = useState("");
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (user?.role === "SuperAdmin") {
-            API.get("/hotels", { params: { limit: 100 } })
-                .then((res) => setHotels(res.data.hotels || res.data))
-                .catch(() => {});
-        }
-    }, [user]);
+    const { data: hotelsData } = useAllHotels();
+    const hotels = hotelsData?.hotels || hotelsData || [];
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });

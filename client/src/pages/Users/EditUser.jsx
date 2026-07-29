@@ -1,8 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useUser } from "../../hooks/useUsers";
+import { useAllHotels } from "../../hooks/useHotels";
 import API from "../../api/axios";
 
 const EditUser = () => {
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    const { data: userData, isLoading: userLoading } = useUser(id);
+    const { data: hotelsData } = useAllHotels();
+    const hotels = hotelsData?.hotels || [];
+
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -12,37 +24,18 @@ const EditUser = () => {
         phone: "",
         isActive: true,
     });
-    const [hotels, setHotels] = useState([]);
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
-    const { id } = useParams();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [userRes, hotelsRes] = await Promise.all([
-                    API.get(`/users/${id}`),
-                    API.get("/hotels", { params: { limit: 100 } }),
-                ]);
-                const user = userRes.data;
-                setForm({
-                    name: user.name,
-                    email: user.email,
-                    password: "",
-                    role: user.role,
-                    hotel: user.hotel?._id || "",
-                    phone: user.phone || "",
-                    isActive: user.isActive,
-                });
-                setHotels(hotelsRes.data.hotels);
-            } catch (err) {
-                setError("Failed to load user");
-            }
-        };
-        fetchData();
-    }, [id]);
+    if (userData && !form.name) {
+        setForm({
+            name: userData.name,
+            email: userData.email,
+            password: "",
+            role: userData.role,
+            hotel: userData.hotel?._id || "",
+            phone: userData.phone || "",
+            isActive: userData.isActive,
+        });
+    }
 
     const handleChange = (e) => {
         const value = e.target.type === "checkbox"

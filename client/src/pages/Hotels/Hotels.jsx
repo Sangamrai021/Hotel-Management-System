@@ -1,48 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { useHotels, hotelsKeys } from "../../hooks/useHotels";
 import API from "../../api/axios";
 
 const Hotels = () => {
-    const [hotels, setHotels] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const [deleteModal, setDeleteModal] = useState({ show: false, hotel: null });
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { data, isLoading } = useHotels(currentPage, search);
 
-    const fetchHotels = async (page = 1) => {
-        try {
-            const res = await API.get("/hotels", {
-                params: { search, page, limit: 10 },
-            });
-            setHotels(res.data.hotels);
-            setTotalPages(res.data.totalPages);
-            setCurrentPage(res.data.currentPage);
-        } catch (error) {
-            console.error("Failed to fetch hotels");
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        setCurrentPage(1);
-        fetchHotels(1);
-    }, [search]);
+    const hotels = data?.hotels || [];
+    const totalPages = data?.totalPages || 1;
 
     const handleDelete = async () => {
         try {
             await API.delete(`/hotels/${deleteModal.hotel._id}`);
             setDeleteModal({ show: false, hotel: null });
-            fetchHotels(currentPage);
+            queryClient.invalidateQueries({ queryKey: hotelsKeys.all });
         } catch (err) {
             alert(err.response?.data?.message || "Failed to delete hotel");
         }
     };
 
-    if (loading) return (
+    if (isLoading) return (
         <div className="page-container">
             <div className="page-header"><div style={{ height: "24px", width: "200px" }} className="dash-skel" /></div>
             <div className="page-toolbar"><div className="dash-skel" style={{ width: "320px", height: "36px", borderRadius: "6px" }} /></div>
@@ -147,8 +130,8 @@ const Hotels = () => {
                     <div className="page-pagination">
                         <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
                         <div className="page-pg-ctrls">
-                            <button onClick={() => fetchHotels(currentPage - 1)} disabled={currentPage === 1} className="btn btn-primary">← Previous</button>
-                            <button onClick={() => fetchHotels(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-primary">Next →</button>
+                            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="btn btn-primary">← Previous</button>
+                            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-primary">Next →</button>
                         </div>
                     </div>
                 </>

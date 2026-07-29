@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import API from "../../api/axios";
+import { useDashboardStats } from "../../hooks/useDashboardStats";
 
 const AnimatedCounter = ({ value, duration = 1500 }) => {
   const [display, setDisplay] = useState(0);
@@ -122,28 +122,12 @@ const BADGE_COLORS = {
 };
 
 const Dashboard = () => {
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { data: stats, isLoading, isError, error, refetch } = useDashboardStats();
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await API.get("/dashboard/stats");
-        setStats(res.data);
-      } catch {
-        setError("Failed to load dashboard stats");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStats();
-  }, []);
-
-  if (loading) return <LoadingSkeleton />;
-  if (error) return <ErrorState message={error} onRetry={() => window.location.reload()} />;
+  if (isLoading) return <LoadingSkeleton />;
+  if (isError) return <ErrorState message={error?.message || "Failed to load dashboard stats"} onRetry={() => refetch()} />;
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",

@@ -1,10 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useGuest } from "../../hooks/useGuests";
 import API from "../../api/axios";
 
 const EditGuest = () => {
     const { user } = useAuth();
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    const { data: guestData, isLoading: guestLoading } = useGuest(id);
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -14,30 +21,18 @@ const EditGuest = () => {
         idNumber: "",
     });
     const [hotelInfo, setHotelInfo] = useState(null);
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    const { id } = useParams();
 
-    useEffect(() => {
-        const fetchGuest = async () => {
-            try {
-                const res = await API.get(`/guests/${id}`);
-                setForm({
-                    name: res.data.name,
-                    email: res.data.email,
-                    phone: res.data.phone,
-                    address: res.data.address,
-                    idProof: res.data.idProof,
-                    idNumber: res.data.idNumber,
-                });
-                setHotelInfo(res.data.hotel);
-            } catch (err) {
-                setError("Failed to load guest");
-            }
-        };
-        fetchGuest();
-    }, [id]);
+    if (guestData && !form.name) {
+        setForm({
+            name: guestData.name,
+            email: guestData.email,
+            phone: guestData.phone,
+            address: guestData.address || "",
+            idProof: guestData.idProof,
+            idNumber: guestData.idNumber,
+        });
+        setHotelInfo(guestData.hotel);
+    }
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });

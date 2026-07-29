@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUsers, usersKeys } from "../../hooks/useUsers";
 import API from "../../api/axios";
 
 const getRoleBadgeStyle = (role) => {
@@ -32,41 +34,22 @@ const LoadingSkeleton = () => (
 );
 
 const Users = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const [deleteModal, setDeleteModal] = useState({ show: false, user: null });
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { data, isLoading } = useUsers(currentPage, search, roleFilter);
 
-    const fetchUsers = async (page = 1) => {
-        try {
-            const res = await API.get("/users", {
-                params: { search, role: roleFilter, page, limit: 10 },
-            });
-            setUsers(res.data.users);
-            setTotalPages(res.data.totalPages);
-            setCurrentPage(res.data.currentPage);
-        } catch (error) {
-            console.error("Failed to fetch users");
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        setCurrentPage(1);
-        fetchUsers(1);
-    }, [search, roleFilter]);
+    const users = data?.users || [];
+    const totalPages = data?.totalPages || 1;
 
     const handleDelete = async () => {
         try {
             await API.delete(`/users/${deleteModal.user._id}`);
             setDeleteModal({ show: false, user: null });
-            fetchUsers(currentPage);
+            queryClient.invalidateQueries({ queryKey: usersKeys.all });
         } catch (err) {
             alert(err.response?.data?.message || "Failed to delete user");
         }
@@ -75,13 +58,13 @@ const Users = () => {
     const handleToggleStatus = async (id, currentStatus) => {
         try {
             await API.patch(`/users/${id}/toggle-status`);
-            fetchUsers(currentPage);
+            queryClient.invalidateQueries({ queryKey: usersKeys.all });
         } catch (err) {
             alert(err.response?.data?.message || "Failed to update status");
         }
     };
 
-    if (loading) return <LoadingSkeleton />;
+    if (isLoading) return <LoadingSkeleton />;
 
     return (
         <div className="page-container">
@@ -202,8 +185,8 @@ const Users = () => {
                     <div className="page-pagination">
                         <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
                         <div className="page-pg-ctrls">
-                            <button onClick={() => fetchUsers(currentPage - 1)} disabled={currentPage === 1} className="btn btn-primary">← Previous</button>
-                            <button onClick={() => fetchUsers(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-primary">Next →</button>
+                            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="btn btn-primary">← Previous</button>
+                            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-primary">Next →</button>
                         </div>
                     </div>
                 </>

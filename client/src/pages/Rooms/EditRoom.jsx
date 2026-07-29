@@ -1,10 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useRoom } from "../../hooks/useRooms";
 import API from "../../api/axios";
 
 const EditRoom = () => {
     const { user } = useAuth();
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    const { data: roomData, isLoading: roomLoading } = useRoom(id);
     const [form, setForm] = useState({
         roomNumber: "",
         roomType: "Standard",
@@ -13,30 +20,17 @@ const EditRoom = () => {
         status: "Available",
     });
     const [hotelInfo, setHotelInfo] = useState(null);
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    const { id } = useParams();
 
-    useEffect(() => {
-        const fetchRoom = async () => {
-            try {
-                const res = await API.get(`/rooms/${id}`);
-                setForm({
-                    roomNumber: res.data.roomNumber,
-                    roomType: res.data.roomType,
-                    pricePerNight: res.data.pricePerNight,
-                    description: res.data.description,
-                    status: res.data.status,
-                });
-                setHotelInfo(res.data.hotel);
-            } catch (error) {
-                console.log(error);
-                setError("Failed to load room");
-            }
-        };
-        fetchRoom();
-    }, [id]);
+    if (roomData && !form.roomNumber) {
+        setForm({
+            roomNumber: roomData.roomNumber,
+            roomType: roomData.roomType,
+            pricePerNight: roomData.pricePerNight,
+            description: roomData.description,
+            status: roomData.status,
+        });
+        setHotelInfo(roomData.hotel);
+    }
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });

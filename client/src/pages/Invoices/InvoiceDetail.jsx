@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useInvoiceByBooking, invoicesKeys } from "../../hooks/useInvoices";
+import { useQueryClient } from "@tanstack/react-query";
 import API from "../../api/axios";
 
 const printStyles = `
@@ -13,8 +15,6 @@ const printStyles = `
 `;
 
 const InvoiceDetail = () => {
-    const [invoice, setInvoice] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [generating, setGenerating] = useState(false);
     const [error, setError] = useState("");
     const [paymentModal, setPaymentModal] = useState(false);
@@ -24,33 +24,17 @@ const InvoiceDetail = () => {
     const { bookingId } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
+    const queryClient = useQueryClient();
+
+    const { data: invoice, isLoading, isError, refetch } = useInvoiceByBooking(bookingId);
 
     const canCollectPayment = ["SuperAdmin", "Manager", "Receptionist"].includes(user?.role);
-
-    const fetchInvoice = async () => {
-        try {
-            const res = await API.get(`/invoices/booking/${bookingId}`);
-            setInvoice(res.data);
-        } catch (err) {
-            if (err.response?.status === 404) {
-                setInvoice(null);
-            } else {
-                setError("Failed to load invoice");
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchInvoice();
-    }, [bookingId]);
 
     const handleGenerate = async () => {
         setGenerating(true);
         try {
             const res = await API.post(`/invoices/booking/${bookingId}`);
-            setInvoice(res.data);
+            refetch();
         } catch (err) {
             setError(err.response?.data?.message || "Failed to generate invoice");
         } finally {
@@ -71,7 +55,7 @@ const InvoiceDetail = () => {
             });
             setPaymentSuccess(true);
             setPaymentModal(false);
-            fetchInvoice();
+            queryClient.invalidateQueries({ queryKey: invoicesKeys.byBooking(bookingId) });
         } catch (err) {
             alert(err.response?.data?.message || "Failed to collect payment");
         } finally {
@@ -88,8 +72,8 @@ const InvoiceDetail = () => {
         }
     };
 
-    if (loading) return <div style={styles.center}>Loading...</div>;
-    if (error) return <div style={styles.center}>{error}</div>;
+    if (isLoading) return <div style={styles.center}>Loading...</div>;
+    if (isError) return <div style={styles.center}>{error || "Failed to load invoice"}</div>;
 
     if (!invoice) {
         return (

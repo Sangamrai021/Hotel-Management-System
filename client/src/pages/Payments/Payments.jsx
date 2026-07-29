@@ -1,16 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
+import { usePaymentSummary } from "../../hooks/usePayments";
 import API from "../../api/axios";
 
 const Payments = () => {
-    const [invoices, setInvoices] = useState([]);
-    const [payments, setPayments] = useState([]);
-    const [summary, setSummary] = useState(null);
     const [activeTab, setActiveTab] = useState("pending");
-    const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const [paymentModal, setPaymentModal] = useState({ show: false, invoice: null });
     const [paymentForm, setPaymentForm] = useState({ method: "Cash", transactionId: "" });
     const [paymentLoading, setPaymentLoading] = useState(false);
@@ -18,35 +15,21 @@ const Payments = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const fetchData = async (page = 1) => {
-        try {
-            setLoading(true);
-            const [invoicesRes, paymentsRes, summaryRes] = await Promise.all([
-                API.get("/invoices", {
-                    params: {
-                        paymentStatus: activeTab === "pending" ? "Pending" : activeTab === "collected" ? "Paid" : undefined,
-                        page,
-                        limit: 10,
-                    },
-                }),
-                API.get("/payments", { params: { page, limit: 10 } }),
-                API.get("/payments/summary"),
-            ]);
-            setInvoices(invoicesRes.data.invoices);
-            setTotalPages(invoicesRes.data.totalPages);
-            setCurrentPage(invoicesRes.data.currentPage);
-            setPayments(paymentsRes.data.payments);
-            setSummary(summaryRes.data);
-        } catch (err) {
-            console.error("Failed to fetch payment data");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const paymentStatus = activeTab === "pending" ? "Pending" : activeTab === "collected" ? "Paid" : undefined;
 
-    useEffect(() => {
-        fetchData(1);
-    }, [activeTab]);
+    const { data: invoicesData, isLoading: invoicesLoading } = useQuery({
+        queryKey: ["invoices", "payments", { paymentStatus, page: currentPage }],
+        queryFn: () => API.get("/invoices", {
+            params: { paymentStatus, page: currentPage, limit: 10 },
+        }).then(r => r.data),
+        placeholderData: keepPreviousData,
+    });
+
+    const { data: summary, isLoading: summaryLoading } = usePaymentSummary();
+
+    const invoices = invoicesData?.invoices || [];
+    const totalPages = invoicesData?.totalPages || 1;
+    const loading = invoicesLoading || summaryLoading;
 
     const handleCollectPayment = async () => {
         if (paymentForm.method !== "Cash" && !paymentForm.transactionId)
@@ -60,7 +43,6 @@ const Payments = () => {
                 transactionId: paymentForm.transactionId || null,
             });
             setPaymentSuccess(res.data);
-            fetchData(currentPage);
         } catch (err) {
             alert(err.response?.data?.message || "Failed to collect payment");
         } finally {
@@ -261,7 +243,7 @@ const Payments = () => {
                     {/* Pagination */}
                     <div                     style={styles.pagination}>
                         <button
-                            onClick={() => fetchData(currentPage - 1)}
+                                                    onClick={() => setCurrentPage(currentPage - 1)}
                             disabled={currentPage === 1}
                             className="btn btn-primary"
                             style={styles.pageBtn}
@@ -272,7 +254,7 @@ const Payments = () => {
                             Page {currentPage} of {totalPages}
                         </span>
                         <button
-                            onClick={() => fetchData(currentPage + 1)}
+                                                    onClick={() => setCurrentPage(currentPage + 1)}
                             disabled={currentPage === totalPages}
                             className="btn btn-primary"
                             style={styles.pageBtn}

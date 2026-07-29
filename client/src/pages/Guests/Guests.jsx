@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGuests, guestsKeys } from "../../hooks/useGuests";
 import API from "../../api/axios";
 
 const LoadingSkeleton = () => (
@@ -24,56 +26,26 @@ const LoadingSkeleton = () => (
 );
 
 const Guests = () => {
-    const [guests, setGuests] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { data, isLoading } = useGuests(currentPage, search);
 
-    const fetchGuests = async (page = 1) => {
-        try {
-            const res = await API.get("/guests", { params: { search, page, limit: 10 } });
-            setGuests(res.data.guests);
-            setTotalPages(res.data.totalPages);
-            setCurrentPage(res.data.currentPage);
-        } catch (error) {
-            console.log(error);
-            console.error("Failed to fetch guests");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        const loadGuests = async () => {
-            try {
-                const res = await API.get("/guests", { params: { search, page: 1, limit: 10 } });
-                setGuests(res.data.guests);
-                setTotalPages(res.data.totalPages);
-                setCurrentPage(res.data.currentPage || 1);
-            } catch (error) {
-                console.log(error);
-                console.error("Failed to fetch guests");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadGuests();
-    }, [search]);
+    const guests = data?.guests || [];
+    const totalPages = data?.totalPages || 1;
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this guest?")) return;
         try {
             await API.delete(`/guests/${id}`);
-            fetchGuests(currentPage);
+            queryClient.invalidateQueries({ queryKey: guestsKeys.all });
         } catch (err) {
             alert(err.response?.data?.message || "Failed to delete guest");
         }
     };
 
-    if (loading) return <LoadingSkeleton />;
+    if (isLoading) return <LoadingSkeleton />;
 
     return (
         <div className="page-container">
@@ -151,14 +123,14 @@ const Guests = () => {
                         <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
                         <div className="page-pg-ctrls">
                             <button
-                                onClick={() => fetchGuests(currentPage - 1)}
+                                                    onClick={() => setCurrentPage(currentPage - 1)}
                                 disabled={currentPage === 1}
                                 className="btn btn-primary"
                             >
                                 ← Previous
                             </button>
                             <button
-                                onClick={() => fetchGuests(currentPage + 1)}
+                                                    onClick={() => setCurrentPage(currentPage + 1)}
                                 disabled={currentPage === totalPages}
                                 className="btn btn-primary"
                             >

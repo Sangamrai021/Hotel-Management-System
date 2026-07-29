@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import API from "../../api/axios";
 
 const AddBooking = () => {
@@ -9,29 +10,24 @@ const AddBooking = () => {
         checkIn: "",
         checkOut: "",
     });
-    const [guests, setGuests] = useState([]);
-    const [rooms, setRooms] = useState([]);
     const [availability, setAvailability] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [guestsRes, roomsRes] = await Promise.all([
-                    API.get("/guests", { params: { limit: 50 } }),
-                    API.get("/rooms", { params: { status: "Available", limit: 50 } }),
-                ]);
-                setGuests(guestsRes.data.guests);
-                setRooms(roomsRes.data.rooms);
-            } catch (error) {
-                console.log(error);
-                setError("Failed to load guests or rooms");
-            }
-        };
-        fetchData();
-    }, []);
+    const { data: guestsData } = useQuery({
+        queryKey: ["guests", "dropdown"],
+        queryFn: () => API.get("/guests", { params: { limit: 50 } }).then(r => r.data),
+        staleTime: 5 * 60 * 1000,
+    });
+    const { data: roomsData } = useQuery({
+        queryKey: ["rooms", "dropdown"],
+        queryFn: () => API.get("/rooms", { params: { status: "Available", limit: 50 } }).then(r => r.data),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const guests = guestsData?.guests || [];
+    const rooms = roomsData?.rooms || [];
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });

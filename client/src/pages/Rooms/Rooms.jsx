@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRooms, roomsKeys } from "../../hooks/useRooms";
 import API from "../../api/axios";
 
 const LoadingSkeleton = () => (
@@ -24,62 +26,28 @@ const LoadingSkeleton = () => (
 );
 
 const Rooms = () => {
-    const [rooms, setRooms] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [roomType, setRoomType] = useState("");
     const [status, setStatus] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { data, isLoading } = useRooms(currentPage, search, roomType, status);
 
-    const fetchRooms = async (page = 1) => {
-        try {
-            const res = await API.get("/rooms", {
-                params: { search, roomType, status, page, limit: 10 },
-            });
-            setRooms(res.data.rooms);
-            setTotalPages(res.data.totalPages);
-            setCurrentPage(res.data.currentPage);
-        } catch (error) {
-            console.log(error);
-            console.error("Failed to fetch rooms");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        const loadRooms = async () => {
-            try {
-                const res = await API.get("/rooms", {
-                    params: { search, roomType, status, page: 1, limit: 10 },
-                });
-                setRooms(res.data.rooms);
-                setTotalPages(res.data.totalPages);
-                setCurrentPage(res.data.currentPage || 1);
-            } catch (error) {
-                console.log(error);
-                console.error("Failed to fetch rooms");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadRooms();
-    }, [search, roomType, status]);
+    const rooms = data?.rooms || [];
+    const totalPages = data?.totalPages || 1;
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this room?")) return;
         try {
             await API.delete(`/rooms/${id}`);
-            fetchRooms(currentPage);
+            queryClient.invalidateQueries({ queryKey: roomsKeys.all });
         } catch (err) {
             alert(err.response?.data?.message || "Failed to delete room");
         }
     };
 
-    if (loading) return <LoadingSkeleton />;
+    if (isLoading) return <LoadingSkeleton />;
 
     return (
         <div className="page-container">
@@ -173,14 +141,14 @@ const Rooms = () => {
                         <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
                         <div className="page-pg-ctrls">
                             <button
-                                onClick={() => fetchRooms(currentPage - 1)}
+                                                    onClick={() => setCurrentPage(currentPage - 1)}
                                 disabled={currentPage === 1}
                                 className="btn btn-primary"
                             >
                                 ← Previous
                             </button>
                             <button
-                                onClick={() => fetchRooms(currentPage + 1)}
+                                                    onClick={() => setCurrentPage(currentPage + 1)}
                                 disabled={currentPage === totalPages}
                                 className="btn btn-primary"
                             >

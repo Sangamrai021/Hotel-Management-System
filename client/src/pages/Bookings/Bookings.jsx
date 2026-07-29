@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { useBookings, bookingsKeys } from "../../hooks/useBookings";
 import API from "../../api/axios";
 
 const getStatusColor = (status) => {
@@ -37,48 +39,19 @@ const LoadingSkeleton = () => (
 );
 
 const Bookings = () => {
-    const [bookings, setBookings] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { data, isLoading } = useBookings(currentPage, status);
 
-    const fetchBookings = async (page = 1) => {
-        try {
-            const res = await API.get("/bookings", { params: { status, page, limit: 10 } });
-            setBookings(res.data.bookings);
-            setTotalPages(res.data.totalPages);
-            setCurrentPage(res.data.currentPage);
-        } catch (error) {
-            console.log(error);
-            console.error("Failed to fetch bookings");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        const loadBookings = async () => {
-            try {
-                const res = await API.get("/bookings", { params: { status, page: 1, limit: 10 } });
-                setBookings(res.data.bookings);
-                setTotalPages(res.data.totalPages);
-                setCurrentPage(res.data.currentPage || 1);
-            } catch (error) {
-                console.log(error);
-                console.error("Failed to fetch bookings");
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadBookings();
-    }, [status]);
+    const bookings = data?.bookings || [];
+    const totalPages = data?.totalPages || 1;
 
     const handleStatusUpdate = async (id, newStatus) => {
         try {
             await API.patch(`/bookings/${id}/status`, { status: newStatus });
-            fetchBookings(currentPage);
+            queryClient.invalidateQueries({ queryKey: bookingsKeys.all });
         } catch (err) {
             alert(err.response?.data?.message || "Failed to update status");
         }
@@ -88,7 +61,7 @@ const Bookings = () => {
         if (!window.confirm("Delete this booking?")) return;
         try {
             await API.delete(`/bookings/${id}`);
-            fetchBookings(currentPage);
+            queryClient.invalidateQueries({ queryKey: bookingsKeys.all });
         } catch (err) {
             alert(err.response?.data?.message || "Failed to delete booking");
         }
@@ -98,7 +71,7 @@ const Bookings = () => {
         navigate(`/invoices/${bookingId}`);
     };
 
-    if (loading) return <LoadingSkeleton />;
+    if (isLoading) return <LoadingSkeleton />;
 
     return (
         <div className="page-container">
@@ -203,14 +176,14 @@ const Bookings = () => {
                         <span className="page-page-info">Showing page {currentPage} of {totalPages}</span>
                         <div className="page-pg-ctrls">
                             <button
-                                onClick={() => fetchBookings(currentPage - 1)}
+                                                    onClick={() => setCurrentPage(currentPage - 1)}
                                 disabled={currentPage === 1}
                                 className="btn btn-primary"
                             >
                                 ← Previous
                             </button>
                             <button
-                                onClick={() => fetchBookings(currentPage + 1)}
+                                                    onClick={() => setCurrentPage(currentPage + 1)}
                                 disabled={currentPage === totalPages}
                                 className="btn btn-primary"
                             >

@@ -1,13 +1,27 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
+import { dashboardKeys, fetchDashboardStats } from "../hooks/useDashboardStats";
+import { roomsKeys, fetchRooms } from "../hooks/useRooms";
+import { guestsKeys, fetchGuests } from "../hooks/useGuests";
+import { bookingsKeys, fetchBookings } from "../hooks/useBookings";
+import { invoicesKeys, fetchInvoices } from "../hooks/useInvoices";
+import { paymentsKeys, fetchPayments } from "../hooks/usePayments";
+import { hotelsKeys, fetchHotels } from "../hooks/useHotels";
+import { usersKeys, fetchUsers } from "../hooks/useUsers";
 
 const Navbar = () => {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [showModal, setShowModal] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const prefetch = (queryKey, queryFn) => {
+        queryClient.prefetchQuery({ queryKey, queryFn, staleTime: 30 * 1000 });
+    };
 
     const handleLogout = () => {
         logout();
@@ -188,44 +202,44 @@ const Navbar = () => {
                 {/* Navigation Links */}
                 <div className={"nav-links-wrapper" + (mobileMenuOpen ? " open" : "")} onClick={() => mobileMenuOpen && setMobileMenuOpen(false)}>
                     <div style={styles.links}>
-                    <Link to="/" className="navbar-link" style={styles.link}>
+                    <Link to="/" className="navbar-link" style={styles.link} onMouseEnter={() => prefetch(dashboardKeys.stats(), fetchDashboardStats)}>
                         Dashboard
                     </Link>
 
                     {["SuperAdmin", "Manager", "Receptionist"].includes(user?.role) && (
-                        <Link to="/rooms" className="navbar-link" style={styles.link}>
+                        <Link to="/rooms" className="navbar-link" style={styles.link} onMouseEnter={() => prefetch(roomsKeys.list(1, "", "", ""), () => fetchRooms(1, "", "", ""))}>
                             Rooms
                         </Link>
                     )}
 
                     {["SuperAdmin", "Manager", "Receptionist"].includes(user?.role) && (
-                        <Link to="/guests" className="navbar-link" style={styles.link}>
+                        <Link to="/guests" className="navbar-link" style={styles.link} onMouseEnter={() => prefetch(guestsKeys.list(1, ""), () => fetchGuests(1, ""))}>
                             Guests
                         </Link>
                     )}
 
                     {["SuperAdmin", "Manager", "Receptionist"].includes(user?.role) && (
-                        <Link to="/bookings" className="navbar-link" style={styles.link}>
+                        <Link to="/bookings" className="navbar-link" style={styles.link} onMouseEnter={() => prefetch(bookingsKeys.list(1, ""), () => fetchBookings(1, ""))}>
                             Bookings
                         </Link>
                     )}
 
-                    <Link to="/invoices" className="navbar-link" style={styles.link}>
+                    <Link to="/invoices" className="navbar-link" style={styles.link} onMouseEnter={() => prefetch(invoicesKeys.list(1, ""), () => fetchInvoices(1, ""))}>
                         Invoices
                     </Link>
 
-                    <Link to="/payments" className="navbar-link" style={styles.link}>
+                    <Link to="/payments" className="navbar-link" style={styles.link} onMouseEnter={() => prefetch(paymentsKeys.list(1), () => fetchPayments(1))}>
                         Payments
                     </Link>
 
                     {user?.role === "SuperAdmin" && (
-                        <Link to="/hotels" className="navbar-link" style={styles.link}>
+                        <Link to="/hotels" className="navbar-link" style={styles.link} onMouseEnter={() => prefetch(hotelsKeys.list(1, ""), () => fetchHotels(1, ""))}>
                             Hotels
                         </Link>
                     )}
 
                     {user?.role === "SuperAdmin" && (
-                        <Link to="/users" className="navbar-link" style={styles.link}>
+                        <Link to="/users" className="navbar-link" style={styles.link} onMouseEnter={() => prefetch(usersKeys.list(1, "", ""), () => fetchUsers(1, "", ""))}>
                             Users
                         </Link>
                     )}
