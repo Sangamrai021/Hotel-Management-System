@@ -7,6 +7,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
@@ -94,6 +95,72 @@ const Navbar = () => {
         .user-avatar:hover {
           background-color: rgba(255,255,255,0.15) !important;
         }
+
+        .nav-mobile-toggle {
+          display: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 8px;
+          border-radius: 6px;
+          transition: background-color 0.18s ease;
+        }
+        .nav-mobile-toggle:hover {
+          background-color: rgba(255,255,255,0.1);
+        }
+        .nav-mobile-toggle:active {
+          transform: scale(0.95);
+        }
+        .nav-mobile-toggle:focus-visible {
+          outline: 2px solid #f4a261;
+          outline-offset: 3px;
+        }
+
+        .nav-links-wrapper {
+          display: flex;
+        }
+
+        @media (max-width: 767px) {
+          .nav-mobile-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .nav-links-wrapper {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #1a1a2e;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding: 12px 24px 20px;
+            z-index: 300;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+          }
+          .nav-links-wrapper.open {
+            display: block;
+          }
+          .nav-links-wrapper > div {
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+          }
+          .nav-links-wrapper .navbar-link {
+            width: 100%;
+            text-align: center;
+          }
+        }
+
+        .nav-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          z-index: 250;
+          background: transparent;
+        }
       `}</style>
 
             <nav style={styles.nav}>
@@ -102,8 +169,25 @@ const Navbar = () => {
                     {user?.hotel?.name || "Hotel Management"}
                 </div>
 
+                {/* Mobile Menu Toggle */}
+                <button className="nav-mobile-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle navigation menu">
+                    {mobileMenuOpen ? (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#aaaacc" strokeWidth="2" strokeLinecap="round">
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                            <line x1="6" y1="18" x2="18" y2="6"/>
+                        </svg>
+                    ) : (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#aaaacc" strokeWidth="2" strokeLinecap="round">
+                            <line x1="4" y1="6" x2="20" y2="6"/>
+                            <line x1="4" y1="12" x2="20" y2="12"/>
+                            <line x1="4" y1="18" x2="20" y2="18"/>
+                        </svg>
+                    )}
+                </button>
+
                 {/* Navigation Links */}
-                <div style={styles.links}>
+                <div className={"nav-links-wrapper" + (mobileMenuOpen ? " open" : "")} onClick={() => mobileMenuOpen && setMobileMenuOpen(false)}>
+                    <div style={styles.links}>
                     <Link to="/" className="navbar-link" style={styles.link}>
                         Dashboard
                     </Link>
@@ -150,7 +234,7 @@ const Navbar = () => {
                     <div style={{ position: "relative" }}>
                         <div
                             className="user-avatar"
-                            onClick={() => setShowDropdown(!showDropdown)}
+                            onClick={(e) => { e.stopPropagation(); setShowDropdown(!showDropdown); }}
                             style={{
                                 display: "flex",
                                 alignItems: "center",
@@ -210,9 +294,9 @@ const Navbar = () => {
                                         left: 0,
                                         width: "100vw",
                                         height: "100vh",
-                                        zIndex: 150,
+                                        zIndex: 400,
                                     }}
-                                    onClick={() => setShowDropdown(false)}
+                                    onClick={(e) => { e.stopPropagation(); setShowDropdown(false); }}
                                 />
 
                                 <div style={{
@@ -223,7 +307,7 @@ const Navbar = () => {
                                     borderRadius: "10px",
                                     boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
                                     minWidth: "220px",
-                                    zIndex: 200,
+                                    zIndex: 450,
                                     overflow: "hidden",
                                 }}>
                                     {/* User Info Header */}
@@ -290,6 +374,8 @@ const Navbar = () => {
                         )}
                     </div>
                 </div>
+                </div>
+                {mobileMenuOpen && <div className="nav-overlay" onClick={() => setMobileMenuOpen(false)} />}
             </nav>
 
             {/* Logout Confirmation Modal */}
@@ -329,6 +415,7 @@ const styles = {
         padding: "12px 24px",
         backgroundColor: "#1a1a2e",
         color: "white",
+        position: "relative",
     },
     brand: {
         fontSize: "20px",
